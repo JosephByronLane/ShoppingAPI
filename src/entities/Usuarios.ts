@@ -1,11 +1,11 @@
 import {Column, PrimaryGeneratedColumn, Entity, Unique, OneToMany, UpdateDateColumn,CreateDateColumn} from 'typeorm'
 
-////import { Compras } from './Compras';
-//import { Productos } from './Productos';
+import { Compras } from './Compras';
+import { Productos } from './Productos';
 
-@Entity('users')
+@Entity('Usuarios')
 @Unique(['correo_electronico'])
-export class users {
+export class Usuarios {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -40,10 +40,10 @@ export class users {
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
 
-    //@OneToMany(() => Compras, compra => compra.usiario)
-    //compras: Compras[];
+    @OneToMany(() => Compras, compra => compra.usuario)
+    compras: Compras[];
 
-   // @OneToMany(() => Productos, producto => producto.usuario)
-   // productos: Productos[];
+    @OneToMany(() => Productos, producto => producto.usuario)
+    productos: Productos[];
 
 }
