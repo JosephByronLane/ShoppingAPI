@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Usuarios } from './Usuarios';
+import { Usuario } from './Usuario';
 
 @Entity('compras')
 export class Compras {
@@ -34,7 +34,7 @@ export class Compras {
     @Column({ type: 'tinyint', nullable: true })
     activo: number;
 
-    @ManyToOne(() => Usuarios, usuario => usuario.compras)
-    usuario: Usuarios;
-
+    @ManyToOne(() => Usuario, usuario => usuario.compras)
+    usuario: Usuario;
+//what
 }

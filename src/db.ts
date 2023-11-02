@@ -1,5 +1,5 @@
 import {DataSource} from 'typeorm'
-import {Usuarios} from './entities/Usuarios'
+import {Usuario} from './entities/Usuario'
 import {Compras} from './entities/Compras'
 import {DetalladoCompras} from './entities/DetalladoCompras'
 import {Productos} from './entities/Productos'
@@ -14,7 +14,7 @@ export const AppDataSource= new DataSource({
     password:'Adminadmin1!',
     database: 'api_equipo2',
     port:3306,
-    entities: [Usuarios, Compras, DetalladoCompras, Productos, ProductosEnPromocion, TipoPromocion],
+    entities: [Usuario, Compras, DetalladoCompras, Productos, ProductosEnPromocion, TipoPromocion/**/],
     logging: true,
-    synchronize: true
+    synchronize: false
 })
