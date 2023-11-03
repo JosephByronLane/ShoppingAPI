@@ -27,15 +27,14 @@ export const getUsers = async (req: Request, res: Response) =>{
 }
 
 export const updateUser = async (req: Request, res: Response) =>{
-    const { name} = req.body
+    const {id} = req.params
     const user = await Usuario.findOneBy({id: parseInt(req.params.id)})
     console.log(user)
 
     if (!user) return res.status(404).json({message:'User does not exist'})
 
-    user.nombre = name 
-    user.save()
-    return res.json('recived')
+    await Usuario.update({id: parseInt(id)}, req.body)
+    return res.sendStatus(204)
 
 }
 
