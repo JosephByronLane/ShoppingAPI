@@ -25,3 +25,17 @@ export const getUsers = async (req: Request, res: Response) =>{
         if(error instanceof Error) return res.status(500).json({message: error.message})
     }
 }
+
+export const updateUser = async (req: Request, res: Response) =>{
+    const { name} = req.body
+    const user = await Usuario.findOneBy({id: parseInt(req.params.id)})
+    console.log(user)
+
+    if (!user) return res.status(404).json({message:'User does not exist'})
+
+    user.nombre = name 
+    user.save()
+    return res.json('recived')
+
+}
+
