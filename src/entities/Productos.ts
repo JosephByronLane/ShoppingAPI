@@ -5,7 +5,7 @@ import {
     ManyToOne,
     JoinColumn
 } from 'typeorm';
-import { Usuarios } from './Usuarios';
+import { Usuario } from './Usuario';
 
 @Entity('productos')
 export class Productos {
@@ -55,7 +55,7 @@ export class Productos {
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
 
-    @ManyToOne(() => Usuarios)
+    @ManyToOne(() => Usuario)
     @JoinColumn({ name: 'id_usuario' })
-    usuario: Usuarios;
+    usuario: Usuario;
 }
