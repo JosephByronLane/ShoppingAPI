@@ -4,7 +4,6 @@ import { Compras } from './Compras';
 import { Productos } from './Productos';
 
 @Entity('Usuario')
-@Unique(['correo_electronico'])
 export class Usuario extends BaseEntity{
 
     @PrimaryGeneratedColumn()
@@ -13,7 +12,7 @@ export class Usuario extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     nombre: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
+    @Column({ type: 'varchar', length: 255, nullable: true, unique: true})
     correo_electronico: string;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
