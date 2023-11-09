@@ -6,3 +6,8 @@ const router = Router()
 
 
 router.post('/usuario', tryLogin)
+
+
+
+
+export default router

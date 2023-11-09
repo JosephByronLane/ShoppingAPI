@@ -66,3 +66,18 @@ catch(error){
 }
 
 }
+
+export const getUserByUsername = async (req: Request, res: Response) => {
+    try {
+        const user = await Usuario.findOneBy({ nombre: req.params.username });
+        if (user) {
+            return res.json(user);
+        } else {
+            return res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        if (error instanceof Error) {
+            return res.status(500).json({ message: error.message });
+        }
+    }
+};

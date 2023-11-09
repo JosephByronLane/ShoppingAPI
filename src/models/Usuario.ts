@@ -1,4 +1,4 @@
-import {Column, PrimaryGeneratedColumn, Entity, Unique, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity} from 'typeorm'
+import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity} from 'typeorm'
 
 import { Compras } from './Compras';
 import { Productos } from './Productos';
