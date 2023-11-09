@@ -1,7 +1,9 @@
 import "reflect-metadata"
 import app from "./app"
 import {AppDataSource} from "./db"
+import dotenv from 'dotenv';
 
+dotenv.config();
 async function main(){
     try{
         await AppDataSource.initialize()

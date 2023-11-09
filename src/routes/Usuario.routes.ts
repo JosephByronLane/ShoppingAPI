@@ -1,9 +1,7 @@
 import {Router} from 'express'
-import { createUser, deleteUser, getUser, updateUser } from '../controllers/usuario.controllers'
-import { getUsers } from '../controllers/usuario.controllers'
-import { verifyToken } from '../middleware/auth.middleware.ts';
+import { createUser, deleteUser, getUser, updateUser , getUsers} from '../controllers/usuario.controllers'
+import { verifyToken } from '../middleware/auth.middleware';
 
-import { create } from 'domain'
 
 
 const router = Router()
