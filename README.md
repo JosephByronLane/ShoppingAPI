@@ -15,3 +15,4 @@ THINGS TO DO:
 - debate if deleting users should actially delete them or if it only sets them as not active
     - setting them as not active would mean changing PUT to only return the users who are active
 -add env varirarbles to postman
+-add middleware checking to every single CRUD
