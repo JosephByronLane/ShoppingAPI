@@ -69,7 +69,7 @@ catch(error){
 
 export const getUserByUsername = async (req: Request, res: Response) => {
     try {
-        const user = await Usuario.findOneBy({ nombre: req.params.username });
+        const user = await findUserByUsername(req.params.usuario);
         if (user) {
             return res.json(user);
         } else {
@@ -79,5 +79,15 @@ export const getUserByUsername = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({ message: error.message });
         }
+    }
+};
+
+export const findUserByUsername = async (nombre: string): Promise<Usuario | null> => {
+    try {
+        const user = await Usuario.findOneBy({ nombre });
+        return user || null;
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 };

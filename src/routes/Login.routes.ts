@@ -5,7 +5,7 @@ import { tryLogin} from '../controllers/auth.controllers'
 const router = Router()
 
 
-router.post('/usuario', tryLogin)
+router.post('/login', tryLogin)
 
 
 
