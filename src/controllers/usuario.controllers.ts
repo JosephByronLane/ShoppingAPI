@@ -1,6 +1,5 @@
 import { Request, Response } from "express"
-import { Usuario } from "../models/Usuario"
-import { ResumeOptions } from "typeorm";
+import { Usuario } from "../models/Usuario";
 
 export const createUser = async(req : Request,res : Response) => {
     try{

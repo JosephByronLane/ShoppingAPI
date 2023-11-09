@@ -14,4 +14,4 @@ THINGS TO DO:
 - Match in-code names with json expected names. (If json sends a value called 'name' make sure its also called 'name' in code and in the database)
 - debate if deleting users should actially delete them or if it only sets them as not active
     - setting them as not active would mean changing PUT to only return the users who are active
-    
+-add env varirarbles to postman
