@@ -5,6 +5,7 @@ import userRoutes from './routes/Usuario.routes'
 import loginRoutes from './routes/Login.routes'
 
 const app =express()
+app.disable('x-powered-by');
 
 app.use(morgan('dev'))
 app.use(cors())

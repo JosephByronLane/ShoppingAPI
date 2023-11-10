@@ -1,8 +1,6 @@
 import {Router} from 'express'
-import { createUser, deleteUser, getUser, updateUser , getUsers} from '../controllers/usuario.controllers'
-import { verifyToken } from '../middleware/auth.middleware';
-
-
+import { createUser, deleteUser, getUser, updateUser } from '../controllers/usuario.controllers'
+import { getUsers } from '../controllers/usuario.controllers'
 
 const router = Router()
 
