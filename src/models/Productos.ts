@@ -3,12 +3,13 @@ import {
     PrimaryGeneratedColumn,
     Column,
     ManyToOne,
-    JoinColumn
+    JoinColumn,
+    BaseEntity
 } from 'typeorm';
 import { Usuario } from './Usuario';
 
 @Entity('productos')
-export class Productos {
+export class Productos extends BaseEntity{
 
     @PrimaryGeneratedColumn()
     id: number;
