@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany } from 'typeorm';
 import { Usuario } from './Usuario';
+import { Productos } from './Productos';
 
 @Entity('compras')
 export class Compras extends BaseEntity{
@@ -36,5 +37,5 @@ export class Compras extends BaseEntity{
 
     @ManyToOne(() => Usuario, usuario => usuario.compras)
     usuario: Usuario;
-//what
+
 }

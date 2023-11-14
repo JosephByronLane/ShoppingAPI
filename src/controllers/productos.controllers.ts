@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { Productos } from "../entities/Productos"
+import { Productos } from "../models/Productos"
 import { ResumeOptions } from "typeorm";
 
 // obtener productos pero falta la cosa de querys

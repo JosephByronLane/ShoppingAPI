@@ -41,8 +41,4 @@ export class Usuario extends BaseEntity{
 
     @OneToMany(() => Compras, compra => compra.usuario)
     compras: Compras[];
-    
-    @OneToMany(() => Productos, producto => producto.usuario)
-    productos: Productos[];
-
 }

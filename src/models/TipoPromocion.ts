@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
-
+//-------------------------
+//NOT USED
+//----------------------------
 @Entity('tipopromocion')
 export class TipoPromocion extends BaseEntity{
 

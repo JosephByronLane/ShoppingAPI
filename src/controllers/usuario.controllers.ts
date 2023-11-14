@@ -53,7 +53,6 @@ export const deleteUser = async (req: Request, res: Response)=>{
 }
 
 export const getUser = async(req:Request, res:Response)=>{
-    
 try{
         //MISSING ERROR HANDLING, IM LAZY SRY
         const user = await Usuario.findOneBy({id:parseInt(req.params.id)})

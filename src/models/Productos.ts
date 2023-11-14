@@ -4,7 +4,9 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
-    BaseEntity
+    BaseEntity,
+    UpdateDateColumn,
+    CreateDateColumn
 } from 'typeorm';
 import { Usuario } from './Usuario';
 
@@ -35,13 +37,13 @@ export class Productos extends BaseEntity{
     @Column({ type: 'varchar', length: 50, nullable: true })
     unidad_de_medida: string;
 
-    @Column('datetime', { nullable: true })
+    @CreateDateColumn('datetime')
     fecha_de_creacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_creacion: string;
 
-    @Column('datetime', { nullable: true })
+    @UpdateDateColumn('datetime')
     fecha_de_actualizacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
@@ -55,8 +57,4 @@ export class Productos extends BaseEntity{
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
-
-    @ManyToOne(() => Usuario)
-    @JoinColumn({ name: 'id_usuario' })
-    usuario: Usuario;
 }

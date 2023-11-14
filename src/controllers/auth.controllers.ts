@@ -22,7 +22,10 @@ export const tryLogin = async(req: Request, res: Response) =>{
         const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
     
         res.json({ token });
-      } catch (error) {
+        console.log(token)
+      } 
+    catch (error) {
+        console.log(error )
         res.status(500).json({ message: 'Server error', error });
       }
 }

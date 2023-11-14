@@ -11,10 +11,10 @@ export const AppDataSource= new DataSource({
     type: 'mysql',
     host:  'localhost',
     username: 'root',
-    password:'letmeinplease',
+    password:'Adminadmin1!',
     database: 'api_equipo2',
     port:3306,
-    entities: [Usuario, Compras, DetalladoCompras, Productos, ProductosEnPromocion, TipoPromocion/**/],
+    entities: [Usuario, Compras, DetalladoCompras, Productos, ProductosEnPromocion],
     logging: true,
     synchronize: false
 })
