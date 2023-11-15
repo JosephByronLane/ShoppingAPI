@@ -11,10 +11,10 @@ export class DetalladoCompras extends BaseEntity{
     @Column({ type: 'int', nullable: true })
     cantidad: number;
 
-    @Column({ type: 'datetime', nullable: true })
+    @CreateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_creacion: Date;
 
-    @CreateDateColumn({ type: 'varchar', length: 255, nullable: true })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_creacion: string;
 
     @UpdateDateColumn({ type: 'datetime', nullable: true })

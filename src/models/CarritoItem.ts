@@ -4,16 +4,18 @@ import { Usuario } from './Usuario';
 
 
 @Entity('carrito')
-export class Carrito extends BaseEntity {
+export class CarritoItem extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Productos)
+    @ManyToOne(() => Productos, producto => producto.carritoItems)
     producto: Productos;
 
     @Column()
     quantity: number;
 
-    @ManyToOne(() => Usuario)
+    @ManyToOne(() => Usuario, usuario => usuario.carrito)
     usuario: Usuario;
 }
+
+//@OneToOne(()=> Carrito, carrito => carrito.usuario)

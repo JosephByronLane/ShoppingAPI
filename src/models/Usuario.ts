@@ -1,8 +1,7 @@
 import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity, OneToOne} from 'typeorm'
 
 import { Compras } from './Compras';
-import { Productos } from './Productos';
-import { Carrito } from './Carrito';
+import { CarritoItem } from './CarritoItem';
 
 @Entity('Usuario')
 export class Usuario extends BaseEntity{
@@ -43,6 +42,6 @@ export class Usuario extends BaseEntity{
     @OneToMany(() => Compras, compras => compras.usuario)
     compras: Compras[];
 
-    @OneToOne(()=> Carrito, carrito => carrito.usuario)
-    carrito: Carrito
+    @OneToMany(() => CarritoItem, carritoitem => carritoitem.usuario)
+    carrito: CarritoItem[];
 }

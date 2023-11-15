@@ -6,9 +6,11 @@ import {
     JoinColumn,
     BaseEntity,
     UpdateDateColumn,
-    CreateDateColumn
+    CreateDateColumn,
+    OneToMany
 } from 'typeorm';
 import { Usuario } from './Usuario';
+import { CarritoItem } from './CarritoItem';
 
 @Entity('productos')
 export class Productos extends BaseEntity{
@@ -52,8 +54,8 @@ export class Productos extends BaseEntity{
     @Column('tinyint', { nullable: true })
     activo: number;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    extra1: string;
+    @OneToMany(() => CarritoItem, carritoItem => carritoItem.producto)
+    carritoItems: CarritoItem[];
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
