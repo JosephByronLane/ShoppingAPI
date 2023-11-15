@@ -19,16 +19,16 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { name, email, contrasenia } = req.body;
         const usuario = new Usuario_1.Usuario();
-        //const id = req.id;
-        //const nombreUsuario = req.nombre
-        ///if (typeof nombreUsuario !== 'string') {
-        ///    return res.status(401).json({ message: 'User name is undefined' });
-        ///}
+        const id = req.id;
+        const nombreUsuario = req.nombre;
+        if (typeof nombreUsuario !== 'string') {
+            return res.status(401).json({ message: 'User name is undefined' });
+        }
         const contraseniaHasheada = yield bcrypt_1.default.hash(contrasenia, 10);
         usuario.nombre = name;
         usuario.correo_electronico = email;
         usuario.contrasenia = contraseniaHasheada;
-        ///await setParameterFields(usuario, nombreUsuario, true);
+        yield setParameterFields(usuario, nombreUsuario, true);
         yield usuario.save();
         return res.json(usuario);
     }
@@ -52,7 +52,6 @@ exports.getUsers = getUsers;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const user = yield Usuario_1.Usuario.findOneBy({ id: parseInt(req.params.id) });
-    console.log(user);
     if (!user)
         return res.status(404).json({ message: 'User does not exist' });
     yield Usuario_1.Usuario.update({ id: parseInt(id) }, req.body);

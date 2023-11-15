@@ -25,11 +25,11 @@ __decorate([
     __metadata("design:type", Number)
 ], DetalladoCompras.prototype, "cantidad", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'datetime', nullable: true }),
+    (0, typeorm_1.CreateDateColumn)({ type: 'datetime', nullable: true }),
     __metadata("design:type", Date)
 ], DetalladoCompras.prototype, "fecha_de_creacion", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'varchar', length: 255, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
     __metadata("design:type", String)
 ], DetalladoCompras.prototype, "usuario_de_creacion", void 0);
 __decorate([

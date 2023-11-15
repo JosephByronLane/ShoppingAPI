@@ -19,10 +19,6 @@ const createAdminUser = () => __awaiter(void 0, void 0, void 0, function* () {
     const usuario = new Usuario_1.Usuario();
     usuario.nombre = 'admin';
     usuario.contrasenia = yield bcrypt_1.default.hash('admin', 10);
-    //const userRepository = getRepository(Usuario);
-    //const admin = new Usuario();
-    //admin.nombre = 'admin';
-    //admin.contrasenia = await bcrypt.hash('admin', 10); 
     const adminExists = yield Usuario_1.Usuario.findOneBy({ nombre: usuario.nombre });
     if (!adminExists) {
         yield usuario.save();

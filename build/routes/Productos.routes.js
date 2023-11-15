@@ -27,19 +27,9 @@ const express_1 = require("express");
 // import {getProducts, getProductById, createProduct, updateProduct, deleteProduct} from '../controllers/productos.controllers';
 const productosController = __importStar(require("../controllers/productos.controllers"));
 const router2 = (0, express_1.Router)();
-const index_1 = require("../index");
-if (index_1.needlogin) {
-    router2.get('/productos', productosController.getProductos);
-    router2.get('/productos/:id', productosController.getProductoById);
-    router2.post('/productos', productosController.createProducto);
-    router2.put('/productos/:id', productosController.updateProducto);
-    router2.delete('/productos/:id', productosController.deleteProducto);
-}
-else {
-    router2.get('/productos', productosController.getProductos);
-    router2.get('/productos/:id', productosController.getProductoById);
-    router2.post('/productos', productosController.createProducto);
-    router2.put('/productos/:id', productosController.updateProducto);
-    router2.delete('/productos/:id', productosController.deleteProducto);
-}
+router2.get('/productos', productosController.getProductos);
+router2.get('/productos/:id', productosController.getProductoById);
+router2.post('/productos', productosController.createProducto);
+router2.put('/productos/:id', productosController.updateProducto);
+router2.delete('/productos/:id', productosController.deleteProducto);
 exports.default = router2;

@@ -11,7 +11,9 @@ const verifyToken = (req, res, next) => {
         }
         console.log("Attemping token verification");
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        console.log("Decoded JWT:", decoded);
         req.id = decoded.id;
+        req.nombre = decoded.nombre;
         next();
     }
     catch (error) {

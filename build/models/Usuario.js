@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuario = void 0;
 const typeorm_1 = require("typeorm");
 const Compras_1 = require("./Compras");
+const CarritoItem_1 = require("./CarritoItem");
 let Usuario = class Usuario extends typeorm_1.BaseEntity {
 };
 exports.Usuario = Usuario;
@@ -63,6 +64,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => Compras_1.Compras, compras => compras.usuario),
     __metadata("design:type", Array)
 ], Usuario.prototype, "compras", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => CarritoItem_1.CarritoItem, carritoitem => carritoitem.usuario),
+    __metadata("design:type", Array)
+], Usuario.prototype, "carrito", void 0);
 exports.Usuario = Usuario = __decorate([
     (0, typeorm_1.Entity)('Usuario')
 ], Usuario);

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Productos = void 0;
 const typeorm_1 = require("typeorm");
+const CarritoItem_1 = require("./CarritoItem");
 let Productos = class Productos extends typeorm_1.BaseEntity {
 };
 exports.Productos = Productos;
@@ -67,9 +68,9 @@ __decorate([
     __metadata("design:type", Number)
 ], Productos.prototype, "activo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
-    __metadata("design:type", String)
-], Productos.prototype, "extra1", void 0);
+    (0, typeorm_1.OneToMany)(() => CarritoItem_1.CarritoItem, carritoItem => carritoItem.producto),
+    __metadata("design:type", Array)
+], Productos.prototype, "carritoItems", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
     __metadata("design:type", String)
