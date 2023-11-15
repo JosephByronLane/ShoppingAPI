@@ -88,7 +88,7 @@ export const getUserByUsername = async (req: Request, res: Response) => {
         const user = await findUserByUsername(req.params.usuario);
         if (user) {
             return res.json(user);
-        } else {
+        } else {    
             return res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {

@@ -9,5 +9,6 @@ router.post('/carrito', verifyToken, addToCart)
 router.get('/carrito', verifyToken, getCartItems)
 router.delete('/carrito', verifyToken, removeFromCart)
 router.put('/carrito', verifyToken, updateCartItem)
+router.put('/carrito/comprar', verifyToken, updateCartItem)
 
 export default router
