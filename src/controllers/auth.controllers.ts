@@ -19,7 +19,7 @@ export const tryLogin = async(req: Request, res: Response) =>{
           return res.status(401).json({ message: 'Wrong password' });
         }
     
-        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, nombre: user.nombre }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
     
         res.json({ token });
         console.log(token)

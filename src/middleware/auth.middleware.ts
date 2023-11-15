@@ -8,9 +8,12 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
       return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
 
-    console.log("Attempted token verification")
+    console.log("Attemping token verification")
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    
+    console.log("Decoded JWT:", decoded);
+
+    req.id = decoded.id;
+    req.nombre = decoded.nombre;
     next();
   } catch (error) {
     res.status(400).json({ message: 'Invalid token.' });

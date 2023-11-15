@@ -37,13 +37,13 @@ export class Productos extends BaseEntity{
     @Column({ type: 'varchar', length: 50, nullable: true })
     unidad_de_medida: string;
 
-    @CreateDateColumn('datetime')
+    @CreateDateColumn()
     fecha_de_creacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_creacion: string;
 
-    @UpdateDateColumn('datetime')
+    @UpdateDateColumn()
     fecha_de_actualizacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })

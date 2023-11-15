@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Usuario } from './Usuario';
 import { Productos } from './Productos';
 
@@ -20,13 +20,13 @@ export class Compras extends BaseEntity{
     @Column({ type: 'int', nullable: true })
     total_de_productos: number;
 
-    @Column({ type: 'datetime', nullable: true })
+    @CreateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_creacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_creacion: string;
 
-    @Column({ type: 'datetime', nullable: true })
+    @UpdateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_actualizacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
