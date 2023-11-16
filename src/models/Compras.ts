@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany, CreateDateColumn, UpdateDateColumn, JoinColumn, JoinTable } from 'typeorm';
 import { Usuario } from './Usuario';
 import { Productos } from './Productos';
 import { DetalladoCompras } from './DetalladoCompras';
@@ -32,10 +32,14 @@ export class Compras extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_actualizacion: string;
 
-    @Column({ type: 'tinyint', nullable: true })
-    activo: number;
+    @Column({ type: 'tinyint', nullable: true, default:true })
+    activo: boolean;
+
+    @Column({type: 'varchar', length: 255, nullable: false, default: "Activo"})
+    status:string;
 
     @ManyToOne(() => Usuario, usuario => usuario.compras)
+    @JoinColumn()
     usuario: Usuario;
 
     @OneToMany(() => DetalladoCompras, detalladoCompras => detalladoCompras.compra)

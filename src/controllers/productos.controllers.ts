@@ -56,10 +56,11 @@ export const deleteProducto = async (req: Request, res: Response) => {
 
 export const createProducto = async (req: Request, res: Response) => {
     try{
-        const {nombre} = req.body
+        const {nombre, cantidad_en_existencia} = req.body
         console.log(req.body)
         const producto = new Productos();
         producto.nombre = nombre
+        producto.cantidad_en_existencia = cantidad_en_existencia
         await producto.save()
         return res.json(producto)
     }

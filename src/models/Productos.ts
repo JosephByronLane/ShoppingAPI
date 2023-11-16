@@ -7,11 +7,10 @@ import {
     BaseEntity,
     UpdateDateColumn,
     CreateDateColumn,
-    OneToMany
+    OneToMany,
+    OneToOne
 } from 'typeorm';
-import { Usuario } from './Usuario';
-import { CarritoItem } from './CarritoItem';
-
+import { DetalladoCompras } from './DetalladoCompras';
 @Entity('productos')
 export class Productos extends BaseEntity{
 
@@ -33,7 +32,7 @@ export class Productos extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     fabricante: string;
 
-    @Column('int', { nullable: true })
+    @Column('int', { nullable: false, default: 0})
     cantidad_en_existencia: number;
 
     @Column({ type: 'varchar', length: 50, nullable: true })
@@ -54,9 +53,9 @@ export class Productos extends BaseEntity{
     @Column('tinyint', { nullable: true })
     activo: number;
 
-    @OneToMany(() => CarritoItem, carritoItem => carritoItem.producto)
-    carritoItems: CarritoItem[];
-
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
+
+    @OneToOne(() => DetalladoCompras, detalladoCompras => detalladoCompras.producto)
+    detalleCompra: DetalladoCompras; // Only if you have a bidirectional relationship
 }

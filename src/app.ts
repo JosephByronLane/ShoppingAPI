@@ -5,7 +5,7 @@ import userRoutes from './routes/Usuario.routes'
 import loginRoutes from './routes/Login.routes'
 import productosRoutes from './routes/Productos.routes'
 import productosEPRoutes from './routes/ProductosEnPromocion.routes'
-import carritoRoutes from './routes/Carrito.routes'
+import carritoRoutes from './routes/compras.routes'
 
 const app =express()
 app.disable('x-powered-by');

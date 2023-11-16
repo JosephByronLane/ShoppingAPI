@@ -1,10 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, JoinTable, JoinColumn } from 'typeorm';
 import { Compras } from './Compras';
 import { Productos } from './Productos';
-
-/// ------------------------------------
-/// REPLACED WITH Carrito
-// ----------------------------------------
 
 
 @Entity('detallado_compras')
@@ -15,7 +11,7 @@ export class DetalladoCompras extends BaseEntity{
 
     @Column({ type: 'int', nullable: true })
     cantidad: number;
-
+    
     @CreateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_creacion: Date;
 
@@ -25,16 +21,12 @@ export class DetalladoCompras extends BaseEntity{
     @UpdateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_actualizacion: Date;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    usuario_de_actualizacion: string;
-
-    @Column({ type: 'tinyint', nullable: true })
-    activo: number;
-
     @ManyToOne(() => Compras, compra => compra.detalladoCompras)
+    @JoinColumn()
     compra: Compras;
 
-    @ManyToOne(() => Productos)
+    @OneToOne(() => Productos)
+    @JoinColumn()
     producto: Productos;
 
 }
