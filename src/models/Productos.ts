@@ -4,10 +4,13 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
-    BaseEntity
+    BaseEntity,
+    UpdateDateColumn,
+    CreateDateColumn,
+    OneToMany,
+    OneToOne
 } from 'typeorm';
-import { Usuario } from './Usuario';
-
+import { DetalladoCompras } from './DetalladoCompras';
 @Entity('productos')
 export class Productos extends BaseEntity{
 
@@ -29,19 +32,19 @@ export class Productos extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     fabricante: string;
 
-    @Column('int', { nullable: true })
+    @Column('int', { nullable: false, default: 0})
     cantidad_en_existencia: number;
 
     @Column({ type: 'varchar', length: 50, nullable: true })
     unidad_de_medida: string;
 
-    @Column('datetime', { nullable: true })
+    @CreateDateColumn()
     fecha_de_creacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_creacion: string;
 
-    @Column('datetime', { nullable: true })
+    @UpdateDateColumn()
     fecha_de_actualizacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
@@ -51,12 +54,8 @@ export class Productos extends BaseEntity{
     activo: number;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
-    extra1: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
 
-    @ManyToOne(() => Usuario)
-    @JoinColumn({ name: 'id_usuario' })
-    usuario: Usuario;
+    @OneToOne(() => DetalladoCompras, detalladoCompras => detalladoCompras.producto)
+    detalleCompra: DetalladoCompras; // Only if you have a bidirectional relationship
 }

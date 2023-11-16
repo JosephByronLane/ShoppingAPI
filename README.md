@@ -17,3 +17,6 @@ THINGS TO DO:
     - setting them as not active would mean changing PUT to only return the users who are active
 -add env varirarbles to postman
 -add middleware checking to every single CRUD
+
+-add message for correctly login
+-catch the errors and return a json instead.

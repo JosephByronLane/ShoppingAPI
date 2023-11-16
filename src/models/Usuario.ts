@@ -1,7 +1,6 @@
-import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity} from 'typeorm'
+import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity, OneToOne, JoinTable} from 'typeorm'
 
 import { Compras } from './Compras';
-import { Productos } from './Productos';
 
 @Entity('Usuario')
 export class Usuario extends BaseEntity{
@@ -39,10 +38,7 @@ export class Usuario extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
 
-    @OneToMany(() => Compras, compra => compra.usuario)
+    @OneToMany(() => Compras, compras => compras.usuario)
     compras: Compras[];
-    
-    @OneToMany(() => Productos, producto => producto.usuario)
-    productos: Productos[];
 
 }

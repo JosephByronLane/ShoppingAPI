@@ -1,18 +1,36 @@
 import { Request, Response } from "express"
 import { Usuario } from "../models/Usuario"
+import { BaseEntity } from "typeorm"
+import bcrypt from 'bcrypt';
 
 export const createUser = async(req : Request,res : Response) => {
     try{
-        const {name} =req.body
+        const {name, email, contrasenia} =req.body
 
         const usuario = new Usuario();
-        usuario.nombre = name
+        const id = req.id;
+        const nombreUsuario = req.nombre
+        
+        if (typeof nombreUsuario !== 'string') {
+            return res.status(401).json({ message: 'User name is undefined' });
+        }
+
+        const contraseniaHasheada = await bcrypt.hash(contrasenia, 10);
+
+        usuario.nombre = name;
+        usuario.correo_electronico = email;
+        usuario.contrasenia = contraseniaHasheada;
+
+        await setParameterFields(usuario, nombreUsuario, true);
+
+
         await usuario.save()
         return res.json(usuario)
     }
     catch(error){
         if(error instanceof Error)  return res.status(500).json({message: error.message})
     }
+
 }
 
 export const getUsers = async (req: Request, res: Response) =>{
@@ -28,8 +46,7 @@ export const getUsers = async (req: Request, res: Response) =>{
 export const updateUser = async (req: Request, res: Response) =>{
     const {id} = req.params
     const user = await Usuario.findOneBy({id: parseInt(req.params.id)})
-    console.log(user)
-
+    
     if (!user) return res.status(404).json({message:'User does not exist'})
 
     await Usuario.update({id: parseInt(id)}, req.body)
@@ -53,7 +70,6 @@ export const deleteUser = async (req: Request, res: Response)=>{
 }
 
 export const getUser = async(req:Request, res:Response)=>{
-    
 try{
         //MISSING ERROR HANDLING, IM LAZY SRY
         const user = await Usuario.findOneBy({id:parseInt(req.params.id)})
@@ -72,7 +88,7 @@ export const getUserByUsername = async (req: Request, res: Response) => {
         const user = await findUserByUsername(req.params.usuario);
         if (user) {
             return res.json(user);
-        } else {
+        } else {    
             return res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
@@ -91,3 +107,10 @@ export const findUserByUsername = async (nombre: string): Promise<Usuario | null
         return null;
     }
 };
+
+async function setParameterFields(entity: Usuario, nombresIuario: string, isNew: boolean = false): Promise<BaseEntity> {
+    const userField = isNew ? 'usuario_de_creacion' : 'usuario_de_actualizacion';
+    entity[userField] = nombresIuario;
+    await entity.save();
+    return entity;
+}

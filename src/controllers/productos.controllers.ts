@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { Productos } from "../entities/Productos"
+import { Productos } from "../models/Productos"
 import { ResumeOptions } from "typeorm";
 
 // obtener productos pero falta la cosa de querys
@@ -56,10 +56,11 @@ export const deleteProducto = async (req: Request, res: Response) => {
 
 export const createProducto = async (req: Request, res: Response) => {
     try{
-        const {nombre} = req.body
+        const {nombre, cantidad_en_existencia} = req.body
         console.log(req.body)
         const producto = new Productos();
         producto.nombre = nombre
+        producto.cantidad_en_existencia = cantidad_en_existencia
         await producto.save()
         return res.json(producto)
     }

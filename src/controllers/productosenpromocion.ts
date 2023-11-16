@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { ProductosEnPromocion } from "../entities/ProductosEnPromocion"
+import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
 import { ResumeOptions } from "typeorm";
 
 export const getProductoEPs = async (req: Request, res: Response) => {

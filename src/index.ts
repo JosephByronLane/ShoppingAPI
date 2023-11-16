@@ -1,10 +1,13 @@
 import "reflect-metadata"
 import app from "./app"
 import {AppDataSource} from "./db"
-import dotenv from 'dotenv';
 import {createAdminUser} from "./admin-seed"
 
+export const needlogin = true;
+
+import dotenv from 'dotenv';
 dotenv.config();
+
 async function main(){
     try{
         await AppDataSource.initialize()
@@ -12,6 +15,7 @@ async function main(){
         await createAdminUser()
         app.listen(3000)
         console.log('Server is listening on port 3000')
+        console.log('-----------------------------------')
 
 
     } catch(error){

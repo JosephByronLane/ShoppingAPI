@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity } from 'typeorm';
 import { Productos } from './Productos';
-import { TipoPromocion } from './TipoPromocion';
 
 @Entity('productosenpromocion')
 export class ProductosEnPromocion extends BaseEntity{
@@ -35,10 +34,5 @@ export class ProductosEnPromocion extends BaseEntity{
     @ManyToOne(() => Productos)
     @JoinColumn({ name: 'producto_id' })
     producto: Productos;
-
-    @ManyToOne(() => TipoPromocion)
-    @JoinColumn({ name: 'promocion_id' })
-    promocion: TipoPromocion;
-
 }
 
