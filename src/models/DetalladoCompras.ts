@@ -2,6 +2,11 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, CreateDa
 import { Compras } from './Compras';
 import { Productos } from './Productos';
 
+/// ------------------------------------
+/// REPLACED WITH Carrito
+// ----------------------------------------
+
+
 @Entity('detallado_compras')
 export class DetalladoCompras extends BaseEntity{
 
@@ -26,10 +31,10 @@ export class DetalladoCompras extends BaseEntity{
     @Column({ type: 'tinyint', nullable: true })
     activo: number;
 
-    @ManyToOne(() => Compras, compra => compra.id)
+    @ManyToOne(() => Compras, compra => compra.detalladoCompras)
     compra: Compras;
 
-    @ManyToOne(() => Productos, producto => producto.id)
+    @ManyToOne(() => Productos)
     producto: Productos;
 
 }

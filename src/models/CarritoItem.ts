@@ -1,21 +1,21 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Productos } from './Productos';
 import { Usuario } from './Usuario';
+import { DetalladoCompras } from './DetalladoCompras';
 
-
-@Entity('carrito')
+@Entity('carritoitem')
 export class CarritoItem extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Productos, producto => producto.carritoItems)
-    producto: Productos;
-
     @Column()
     quantity: number;
 
-    @ManyToOne(() => Usuario, usuario => usuario.carrito)
-    usuario: Usuario;
+    @ManyToOne(() => DetalladoCompras, detalladoCompras => detalladoCompras.carritoItems)
+    carrito: DetalladoCompras;
+
+    @ManyToOne(() => Productos, producto => producto.carritoItems)
+    producto: Productos;
 }
 
 //@OneToOne(()=> Carrito, carrito => carrito.usuario)

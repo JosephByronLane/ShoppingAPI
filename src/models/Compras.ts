@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Usuario } from './Usuario';
 import { Productos } from './Productos';
-
+import { DetalladoCompras } from './DetalladoCompras';
 @Entity('compras')
 export class Compras extends BaseEntity{
 
@@ -37,5 +37,8 @@ export class Compras extends BaseEntity{
 
     @ManyToOne(() => Usuario, usuario => usuario.compras)
     usuario: Usuario;
+
+    @OneToMany(() => DetalladoCompras, detalladoCompras => detalladoCompras.compra)
+    detalladoCompras: DetalladoCompras[];
 
 }
