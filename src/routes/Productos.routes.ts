@@ -7,15 +7,16 @@ const router2 = Router();
 
 import {needlogin} from '../index'
 import { verify } from 'crypto';
+import { verifyToken } from '../middleware/auth.middleware';
 
 
 
 
-router2.get('/productos',productosController.getProductos);
-router2.get('/productos/:id', productosController.getProductoById);
-router2.post('/productos', productosController.createProducto);
-router2.put('/productos/:id', productosController.updateProducto);
-router2.delete('/productos/:id', productosController.deleteProducto);
+router2.get('/productos',verifyToken,productosController.getProductos);
+router2.get('/productos/:id', verifyToken,productosController.getProductoById);
+router2.post('/productos', verifyToken,productosController.createProducto);
+router2.put('/productos/:id', verifyToken,productosController.updateProducto);
+router2.delete('/productos/:id', verifyToken,productosController.deleteProducto);
 
 
 
