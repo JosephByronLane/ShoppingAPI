@@ -105,8 +105,29 @@ export const getCartItems = async (req: Request, res: Response) => {
             usuario: { id: usuarioid }, 
             activo: true
         },
-        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] // Add nested relation
+        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto']
     });
+
+    return res.json(compra);
+};
+
+export const getCartItem = async (req: Request, res: Response) => {
+    const purchaseId = parseInt(req.params.id); 
+
+    if (isNaN(purchaseId)) {
+        return res.status(400).json({ message: 'Invalid purchase ID' });
+    }
+
+    const compra = await Compras.findOne({
+        where: {
+            id: purchaseId, 
+        },
+        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] 
+    });
+
+    if (!compra) {
+        return res.status(404).json({ message: 'Purchase not found' });
+    }
 
     return res.json(compra);
 };
