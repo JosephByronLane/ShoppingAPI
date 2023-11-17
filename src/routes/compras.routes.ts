@@ -5,11 +5,11 @@ import { verifyToken } from '../middleware/auth.middleware';
 const router = Router();
 
 
-router.post('/compra', verifyToken, addToCart)
-router.get('/compra', verifyToken, getCartItems)
-router.delete('/compra', verifyToken, removeFromCart)
-router.put('/compra', verifyToken, updateCartItem)
+router.post('/equipo-2/purchases', verifyToken, addToCart)
+router.get('/equipo-2/purchases', verifyToken, getCartItems)
+router.delete('/equipo-2/purchases', verifyToken, removeFromCart)
+router.put('/equipo-2/purchases', verifyToken, updateCartItem)
 
-router.post('/compra/finalizar', verifyToken, finalizarCompra)
-router.post('/compra/finalizar', verifyToken, cancelarPedido)
+router.post('/equipo-2/purchases/finalizar', verifyToken, finalizarCompra)
+router.post('/equipo-2/purchases/finalizar', verifyToken, cancelarPedido)
 export default router
