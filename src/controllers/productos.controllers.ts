@@ -55,16 +55,36 @@ export const deleteProducto = async (req: Request, res: Response) => {
 };
 
 export const createProducto = async (req: Request, res: Response) => {
-    try{
-        const {nombre, cantidad_en_existencia} = req.body
-        console.log(req.body)
+    try {
+        const {
+            nombre,
+            descripcion,
+            precio,
+            categoria,
+            fabricante,
+            cantidad_en_existencia,
+            unidad_de_medida,
+            //activo goes here but its off by default
+            extra2
+        } = req.body;
+
         const producto = new Productos();
-        producto.nombre = nombre
-        producto.cantidad_en_existencia = cantidad_en_existencia
-        await producto.save()
-        return res.json(producto)
-    }
-    catch(error){
-        if(error instanceof Error)  return res.status(500).json({message: error.message})
+        producto.nombre = nombre;
+        producto.descripcion = descripcion;
+        producto.precio = precio;
+        producto.categoria = categoria;
+        producto.fabricante = fabricante;
+        producto.cantidad_en_existencia = cantidad_en_existencia;
+        producto.unidad_de_medida = unidad_de_medida;
+        producto.extra2 = extra2;
+
+        await producto.save();
+
+        // Return the created product
+        return res.json(producto);
+        } catch (error) {
+            if (error instanceof Error) {
+            return res.status(500).json({ message: error.message });
+        }
     }
 };
