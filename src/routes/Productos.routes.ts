@@ -12,11 +12,11 @@ import { verifyToken } from '../middleware/auth.middleware';
 
 
 
-router2.get('/productos',verifyToken,productosController.getProductos);
-router2.get('/productos/:id', verifyToken,productosController.getProductoById);
-router2.post('/productos', verifyToken,productosController.createProducto);
-router2.put('/productos/:id', verifyToken,productosController.updateProducto);
-router2.delete('/productos/:id', verifyToken,productosController.deleteProducto);
+router2.get('/equipo-2/product',verifyToken,productosController.getProductos);
+router2.get('/equipo-2/product/:id', verifyToken,productosController.getProductoById);
+router2.post('/equipo-2/product', verifyToken,productosController.createProducto);
+router2.put('/equipo-2/product/:id', verifyToken,productosController.updateProducto);
+router2.delete('/equipo-2/product/:id', verifyToken,productosController.deleteProducto);
 
 
 

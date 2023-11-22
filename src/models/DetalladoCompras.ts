@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, JoinTable, JoinColumn } from 'typeorm';
 import { Compras } from './Compras';
 import { Productos } from './Productos';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 
 @Entity('detallado_compras')
@@ -9,7 +10,8 @@ export class DetalladoCompras extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int', nullable: true })
+    @IsNumber()
+    @Column({ type: 'int', default: 0 })
     cantidad: number;
     
     @CreateDateColumn({ type: 'datetime', nullable: true })
@@ -21,13 +23,12 @@ export class DetalladoCompras extends BaseEntity{
     @UpdateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_actualizacion: Date;
 
-    @ManyToOne(() => Compras, compra => compra.detalladoCompras)
+    @ManyToOne(() => Compras)
     @JoinColumn()
     compra: Compras;
 
-    @OneToOne(() => Productos)
+    @ManyToOne(() => Productos)
     @JoinColumn()
     producto: Productos;
-
 }
 

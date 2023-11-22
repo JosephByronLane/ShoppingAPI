@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
 import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
-import { ResumeOptions } from "typeorm";
+import { Productos } from "../models/Productos";
+import { validateEntity } from "./validation.controller";
+
 
 export const getProductoEPs = async (req: Request, res: Response) => {
     try{
-        const productoEPs = await ProductosEnPromocion.find();
+        const productoEPs = await ProductosEnPromocion.find({
+            where:{
+                activo:1
+            }
+        });
         return res.json(productoEPs)
     }
     catch(error){
@@ -40,11 +45,37 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
     try{
         const{id} = req.params
 
-        const result = await ProductosEnPromocion.delete({id:parseInt(id)})
-        if (result.affected ===0){
-            return res.status(404).json({message: "Producto not found"})
+        if(!id){
+            return res.status(404).json({message: `Error recieving product ID.`})
         }
-        return res.sendStatus(204)
+
+        console.log('-----------------------------------')
+        console.log(`Found ID: ${id} to delete.`);
+        console.log('-----------------------------------')   
+        let promoProduct  =await ProductosEnPromocion.findOne({
+            where:{
+                id: parseInt(id)
+            }
+        })
+
+        console.log('-----------------------------------')
+        console.log(`Succesfully attempted to find product.`);
+        console.log('-----------------------------------')   
+        if (!promoProduct){
+            console.log('-----------------------------------')
+            console.log(`Product was not found.`);
+            console.log('-----------------------------------')   
+            return res.status(404).json({message: `Product with id: ${id} not found.`})
+        }
+
+        promoProduct.activo = 0;
+        console.log('-----------------------------------')
+        console.log(`Product's active succesfully set to 0.`);
+        console.log('-----------------------------------')   
+        res.json({ 
+            status:"Success",
+            message:"Succesfully deleted.",
+        });
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message:error.message})
@@ -53,12 +84,46 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
 
 export const createProductoEP = async (req: Request, res: Response) => {
     try{
-        const {nombre} = req.body
-        console.log(req.body)
-        const producto = new ProductosEnPromocion();
-        producto.nombre = nombre
-        await producto.save()
-        return res.json(producto)
+        const {idproducto} = req.body
+        const promoProduct = new ProductosEnPromocion();
+
+        const errors = await validateEntity(promoProduct, req.body);
+        
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
+
+        console.log('-----------------------------------')
+        console.log(`Found all base variables`);
+        console.log('-----------------------------------')   
+
+        const producto = await Productos.findOne({
+            where: {
+                id: idproducto, 
+            }           
+        });
+
+        console.log('-----------------------------------')
+        console.log(`Was able to retrieve product based on ID`);
+        console.log('-----------------------------------')  
+
+        if (!producto) {
+            console.log('-----------------------------------')
+            console.log(`Product was not found`);
+            console.log('-----------------------------------')  
+            return res.status(404).json({ message: `Product with id: ${idproducto} not found.` });
+        }
+        promoProduct.producto = producto;
+        await ProductosEnPromocion.save(promoProduct);
+        await promoProduct.save()
+        return res.json({ 
+            status:"Success",
+            message:"Succesfully created Promotional product",
+            data: {
+                "id": promoProduct.id,
+                "nombre": promoProduct.nombre            
+            }
+           });
     }
     catch(error){
         if(error instanceof Error)  return res.status(500).json({message: error.message})

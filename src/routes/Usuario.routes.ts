@@ -4,11 +4,11 @@ import {verifyToken} from '../middleware/auth.middleware'
 
 const router = Router()
 
-router.post('/usuario', verifyToken, createUser)
-router.get('/usuario', verifyToken, getUsers)
-router.put('/usuario/:id',verifyToken, updateUser)
-router.delete('/usuario/:id',verifyToken, deleteUser)
-router.get('/usuario/:id', verifyToken, getUser)
+router.post('/equipo-2/user', verifyToken, createUser)
+router.get('/equipo-2/user', verifyToken, getUsers)
+router.put('/equipo-2/user/:id',verifyToken, updateUser)
+router.delete('/equipo-2/user/:id',verifyToken, deleteUser)
+router.get('/equipo-2/user/:id', verifyToken, getUser)
 
 
 export default router

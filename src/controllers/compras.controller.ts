@@ -3,7 +3,6 @@ import { DetalladoCompras } from '../models/DetalladoCompras';
 import { Productos } from '../models/Productos';
 import { Usuario } from '../models/Usuario';
 import { Compras } from '../models/Compras';
-import { Entity } from 'typeorm';
 
 export const addToCart = async (req: Request, res: Response) => {
     
@@ -16,12 +15,20 @@ export const addToCart = async (req: Request, res: Response) => {
     const user = await Usuario.findOneBy({id: usuarioid});
 
     console.log("Found related data.")
+
+    if (typeof cantidad !== 'number') {
+        return res.status(404).json({ message: `Cantidad must be a number.` });
+
+    }
+
     if (!producto) {
         return res.status(404).json({ message: 'Product not found' });
     }
+
     if (!user) {
         return res.status(404).json({ message: 'Error finding user (you).' });
     }
+
     if (producto.cantidad_en_existencia <  cantidad){
         return res.status(404).json({ message: `Not enough available in stock. Only ${producto.cantidad_en_existencia} available.` });
     }
@@ -41,17 +48,17 @@ export const addToCart = async (req: Request, res: Response) => {
     if (!compraActiva){
         console.log("------------------------------------------------")
         console.log("User has no active purchase, creating new one")
-        console.log("------------------------------------------------")
-
         compraActiva = new Compras();
         compraActiva.usuario = user;
+        compraActiva.nombre_del_cliente = user.nombre;
         await Compras.save(compraActiva);
+        console.log(compraActiva)
+        console.log("------------------------------------------------")
 
     }
     else{
         console.log("------------------------------------------------")
         console.log("User has an active purchase, using that one")
-        console.log(compraActiva)
         console.log("------------------------------------------------")
     }
     console.log("------------------------------------------------")
@@ -65,35 +72,69 @@ export const addToCart = async (req: Request, res: Response) => {
             producto: { id: productoId }, 
             compra: { id: compraActiva.id }
         }
-
     });
 
     if (detallePedido) {
         console.log("------------------------------------------------")
         console.log(`PRODUCT FOUND: Found product in cart, adding ${cantidad} to detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
-        detallePedido.cantidad += parseInt(cantidad);
+        detallePedido.cantidad += cantidad;
+        console.log(`${detallePedido.cantidad}`)
+        console.log("------------------------------------------------")
+
     } else {
         detallePedido = new DetalladoCompras();
+        await DetalladoCompras.save(detallePedido);
         console.log("------------------------------------------------")
         console.log(`PRODUCT NOT FOUND: Making new product, adding ${cantidad} to a new detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
         detallePedido.compra=compraActiva;
+        detallePedido.cantidad = 0;
         detallePedido.producto = producto;
-        detallePedido.cantidad = parseInt(cantidad);
+        detallePedido.cantidad += cantidad;
+
+
     }
 
-    await DetalladoCompras.save(detallePedido);
+    if (typeof compraActiva.precio_total !== 'number') {
+        compraActiva.precio_total = parseFloat(compraActiva.precio_total) || 0;
+    }
+
+    let price = typeof producto.precio === 'number' ? producto.precio : parseFloat(producto.precio);
+
+
+    const totalPriceForProduct = price * cantidad;
+
+    compraActiva.precio_total += totalPriceForProduct;
+    
+    compraActiva.total_de_productos += cantidad
     
     producto.cantidad_en_existencia -= cantidad;
+
+    await Compras.save(compraActiva)
+    console.log("------------------------------------------------")
+    console.log(`Saved compra`)
+    console.log("------------------------------------------------")
+    
+    await DetalladoCompras.save(detallePedido);
+    console.log("------------------------------------------------")
+    console.log(`Saved detallePedido`)
+    console.log("------------------------------------------------")
+    
     await Productos.save(producto);
+    console.log("------------------------------------------------")
+    console.log(`Saved producto`)
+    console.log("------------------------------------------------")
+
 
     compraActiva = await Compras.findOne({
         where: { id: compraActiva.id },
-        relations: ['detalladoCompras']
+        relations: ['detalladoCompras', 'detalladoCompras.producto']
     });
 
-    return res.json(compraActiva);
+    const formattedCompra = formatPurchaseLimited(compraActiva);
+
+    return res.json(formattedCompra);
 };
 
 
@@ -105,32 +146,90 @@ export const getCartItems = async (req: Request, res: Response) => {
             usuario: { id: usuarioid }, 
             activo: true
         },
-        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] // Add nested relation
+        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto']
     });
 
-    return res.json(compra);
+    if (!compra) {
+        return res.status(404).json({ message: "Compra not found" });
+    }
+
+    const formattedCompra = formatPurchaseFull(compra);
+
+    return res.json({
+        status: "Success",
+        message: "Found all purchases",
+        data: {
+            formattedCompra
+        }
+    });
 };
 
+export const getCartItem = async (req: Request, res: Response) => {
+    const purchaseId = parseInt(req.params.id); 
+
+    if (isNaN(purchaseId)) {
+        return res.status(400).json({ message: 'Invalid purchase ID' });
+    }
+
+    const compra = await Compras.findOne({
+        where: {
+            id: purchaseId, 
+        },
+        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] 
+    });
+
+    if (!compra) {
+        return res.status(404).json({ message: 'Purchase not found' });
+    }
+
+    const formattedCompra = formatPurchaseFull(compra);
+
+    return res.json({
+        status: "Success",
+        message: `Found purchase with id: ${purchaseId}`,
+        data: {
+            formattedCompra
+        }
+    });};
+
 export const removeFromCart = async (req: Request, res: Response) => {
-    const { cartItemId } = req.body;
-    console.log(req.params)
+    const { detalladoCompraId } = req.body;
+    const usuarioId = req.id; 
+
+
+    if(typeof detalladoCompraId != 'number'){
+        return res.status(404).json({ message: 'Error processing ID.Please make sure its a number.' });
+    }
     console.log("------------------------------------------------")
-    console.log("attempting to find cart item. ID: " + cartItemId);
+    console.log("attempting to find cart item. ID: " + detalladoCompraId);
     console.log("------------------------------------------------")
 
     
-    const cartItem = await DetalladoCompras.findOneBy({ id: parseInt(cartItemId) });
+    const detalladoCompra = await DetalladoCompras.findOne({
+        where: { id: detalladoCompraId },
+        relations: ['producto', 'compra', 'compra.usuario'],
+    });
     console.log("------------------------------------------------")
     console.log("found corresponding cart item");
     console.log("------------------------------------------------")
 
-    if (!cartItem) {
+    if (!detalladoCompra) {
         return res.status(404).json({ message: 'Cart item not found' });
     }
 
-    await DetalladoCompras.remove(cartItem);
+    if (detalladoCompra.compra.status !== 'Activo' || detalladoCompra.compra.usuario.id !== req.id) {
+        return res.status(403).json({ message: 'You do not have permission to remove this item.' });
+    }
+    await DetalladoCompras.remove(detalladoCompra);
 
-    return res.status(204).send();
+    return res.json({ 
+        status:"Success",
+        message:"Succesfully removed item from cart",
+        data: {
+            "detalladoCompraId":detalladoCompraId,
+            "productoNombre": detalladoCompra.producto.nombre
+        }
+       }); 
 };
 
 export const updateCartItem = async (req: Request, res: Response) => {
@@ -155,42 +254,113 @@ export const updateCartItem = async (req: Request, res: Response) => {
 export const finalizarCompra = async (req: Request, res: Response) => {
     const usuarioid = req.id;
 
+    console.log("------------------------------------------------")
+    console.log("Got user ID")
+    console.log("------------------------------------------------")
+
     const compraActiva = await Compras.findOne({
         where: {
             usuario: { id: usuarioid }, 
             activo: true
-        },
-        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] // Add nested relation
+        }
     });
     if (!compraActiva){
         console.log("------------------------------------------------")
         console.log("User has no active purchases.")
         console.log("------------------------------------------------")
         return res.status(404).json({ message: `User with ID: ${usuarioid} has no active purchases.` });
-
     }
-
-    compraActiva.status="Terminado"
+    compraActiva.status="Finalizado"
     compraActiva.activo=false;
+    Compras.save(compraActiva)
+    return res.json({ 
+        status:"Success",
+        message:"Succesfully finalized purchase",
+        data: {
+            "purchaseId": compraActiva.id,
+            "detalladoPedido": compraActiva.detalladoCompras             
+        }
+       }); 
 };
 
 export const cancelarPedido = async (req: Request, res: Response) => {
     const usuarioid = req.id;
+    const compraId = parseInt(req.params.id);
+
+    console.log(compraId)
+
+    if (isNaN(compraId)) {
+        return res.status(400).json({ message: "Invalid Compra ID." });
+    }
 
     const compraActiva = await Compras.findOne({
         where: {
-            usuario: { id: usuarioid }, 
-            activo: true
+            id: compraId,
+            usuario: { id: usuarioid },
+            status: "Finalizado"
         },
-        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] 
+        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto']
     });
-    if (!compraActiva){
-        console.log("------------------------------------------------")
-        console.log("User has no active purchases.")
-        console.log("------------------------------------------------")
-        return res.status(404).json({ message: `User with ID: ${usuarioid} has no active purchases.` });
 
+    if (!compraActiva) {
+        return res.status(404).json({ message: `Compra with ID: ${compraId} not found or is not finalized.` });
     }
 
-    compraActiva.status="Cancelado"
+    if (compraActiva.status === "Cancelado") {
+        return res.status(400).json({ message: `Compra with ID: ${compraId} is already canceled.` });
+    }
+
+    compraActiva.status = "Cancelado";
+    compraActiva.activo = false; 
+    await compraActiva.save();
+
+    return res.json({
+        status: "Success",
+        message: `Compra with ID: ${compraId} has been canceled.`
+    });
+};
+
+const formatPurchaseLimited = (compra) => {//even though theres an error it seems to work lmao
+    return {
+        compraId: compra.id,
+        descripcion: compra.descripcion,
+        nombre_del_cliente: compra.nombre_del_cliente,
+        precio_total: compra.precio_total,
+        total_de_productos: compra.total_de_productos,
+        status: compra.status,
+        detalladoCompras: compra.detalladoCompras.map(dc => ({
+            productoId: dc.producto?.id ,
+            productoNombre: dc.producto?.nombre ,
+            cantidad: dc.cantidad,
+            detalladoCompraId: dc.id
+
+
+        }))
+    };
+};
+const formatPurchaseFull = (compra) => {//even though theres an error it seems to work lmao
+    return {
+        id: compra.id,
+        descripcion: compra.descripcion,
+        nombre_del_cliente: compra.nombre_del_cliente,
+        precio_total: compra.precio_total,
+        total_de_productos: compra.total_de_productos,
+        status: compra.status,
+        usuario: {
+            id: compra.usuario.id,
+            nombre: compra.usuario.nombre,
+        },
+        detalladoCompras: compra.detalladoCompras.map(dc => ({
+            id: dc.id,
+            cantidad: dc.cantidad,
+            producto: {
+                id: dc.producto.id,
+                nombre: dc.producto.nombre,
+                precio: dc.producto.precio,
+                categoria: dc.producto.categoria,
+                fabricante: dc.producto.fabricante,
+                cantidad_en_existencia: dc.producto.cantidad_en_existencia
+            }
+        }))
+    };
 };
