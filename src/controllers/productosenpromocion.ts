@@ -43,20 +43,39 @@ export const updateProductoEP = async (req: Request, res: Response) =>{
 
 export const deleteProductoEP = async (req: Request, res: Response) => {
     try{
-        const{idproducto} = req.params
+        const{id} = req.params
 
+        if(!id){
+            return res.status(404).json({message: `Error recieving product ID.`})
+        }
 
-        var promoProduct  =await ProductosEnPromocion.findOne({
+        console.log('-----------------------------------')
+        console.log(`Found ID: ${id} to delete.`);
+        console.log('-----------------------------------')   
+        let promoProduct  =await ProductosEnPromocion.findOne({
             where:{
-                id: parseInt(idproducto)
+                id: parseInt(id)
             }
         })
+
+        console.log('-----------------------------------')
+        console.log(`Succesfully attempted to find product.`);
+        console.log('-----------------------------------')   
         if (!promoProduct){
+            console.log('-----------------------------------')
+            console.log(`Product was not found.`);
+            console.log('-----------------------------------')   
             return res.status(404).json({message: `Product with id: ${idproducto} not found.`})
         }
 
         promoProduct.activo = 0;
-
+        console.log('-----------------------------------')
+        console.log(`Product's active succesfully set to 0.`);
+        console.log('-----------------------------------')   
+        res.json({ 
+            status:"Success",
+            message:"Succesfully deleted.",
+           });
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message:error.message})
