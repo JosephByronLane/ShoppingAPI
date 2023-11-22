@@ -13,7 +13,7 @@ export const createUser = async(req : Request,res : Response) => {
         const nombreUsuario = req.nombre
         
         const errors = await validateEntity(usuario, req.body);
-        
+
         if (errors.length > 0) {
             return res.status(400).json({ errors });
         }
@@ -159,9 +159,9 @@ export const getUser = async(req:Request, res:Response)=>{
         console.log(`Users with id ${id} active was succesfully found..`);
         console.log('-----------------------------------')   
 
-        res.json({ 
+        return res.json({ 
             status:"Success",
-            message:"Succesfully deleted.",
+            message:"Succesfully found user.",
             data: user
         });
 
