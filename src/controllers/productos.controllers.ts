@@ -1,12 +1,36 @@
 import { Request, Response } from "express";
+import { getRepository } from "typeorm";
+import { ResumeOptions } from "typeorm";
 import { Productos } from "../models/Productos"
 import { validateEntity } from "./validation.controller";
+const Joi = require('joi')
+
+const productosSchema = Joi.object({
+    nombre: Joi.string(),
+    descripcion: Joi.string(),
+    precio: Joi.number(),
+    categoria: Joi.string(),
+    fabricante: Joi.string(),
+    cantidad_en_existencia: Joi.number(),
+    unidad_de_medida: Joi.string(),
+});
 
 
 export const getProductos = async (req: Request, res: Response) => {
     try{
+        const { error, value } = productosSchema.validate(req.query);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        const filtro = value;
+
         const products = await Productos.find({
-            where: {activo: 1},
+            where: {
+                ...filtro,
+                activo: 1
+            },
             select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida'],
         });
         return res.json({

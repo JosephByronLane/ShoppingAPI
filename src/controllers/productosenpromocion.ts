@@ -1,17 +1,42 @@
 import { Request, Response } from "express";
-import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
-import { Productos } from "../models/Productos";
+import { ProductosEnPromocion } from "../models/ProductosEnPromocion";
 import { validateEntity } from "./validation.controller";
+import { Productos } from "../models/Productos";
 
+const Joi = require('joi')
+
+const productosEPSchema = Joi.object({
+    nombre: Joi.string(),
+    descripcion: Joi.string(),
+    precio_en_promocion: Joi.number()
+});
 
 export const getProductoEPs = async (req: Request, res: Response) => {
     try{
-        const productoEPs = await ProductosEnPromocion.find({
+        const { error, value } = productosEPSchema.validate(req.query);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        const filtro = value;
+
+        const productos = await ProductosEnPromocion.find({
             where:{
+                ...filtro,
                 activo:1
-            }
+            },
+            select: [
+                'id',
+                'nombre',
+                'descripcion',
+                'precio_en_promocion',
+                'fecha_de_inicio',
+                'fecha_de_finalizacion'
+            ]
         });
-        return res.json(productoEPs)
+
+        return res.json(productos);
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message: error.message})

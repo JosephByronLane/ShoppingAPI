@@ -3,6 +3,12 @@ import { Usuario } from "../models/Usuario"
 import { BaseEntity } from "typeorm"
 import bcrypt from 'bcrypt';
 import { validateEntity } from "./validation.controller";
+const Joi = require('joi')
+
+const usuariosSchema = Joi.object({
+    nombre: Joi.string(),
+    correo_electronico: Joi.string()
+})
 
 export const createUser = async(req : Request,res : Response) => {
     try{
@@ -46,15 +52,27 @@ export const createUser = async(req : Request,res : Response) => {
            });
     }
     catch(error){
-        if(error instanceof Error)  return res.status(500).json({message: error.message})
+        
+        if(error instanceof Error) return res.status(500).json({message: error.message})
     }
 
 }
 
 export const getUsers = async (req: Request, res: Response) =>{
     try{
+        const { error, value } = usuariosSchema.validate(req.query);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        const filtro = value;
+
         const users = await Usuario.find({
-            where: {activo: 1},
+            where: {
+                ...filtro,
+                activo: 1
+            },
             select: ['id', 'nombre', 'correo_electronico'],
         });
         return res.json({
