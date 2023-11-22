@@ -23,13 +23,12 @@ export class DetalladoCompras extends BaseEntity{
     @UpdateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_actualizacion: Date;
 
-    @ManyToOne(() => Compras, compra => compra.detalladoCompras)
+    @ManyToOne(() => Compras)
     @JoinColumn()
     compra: Compras;
 
-    @OneToOne(() => Productos)
+    @ManyToOne(() => Productos)
     @JoinColumn()
     producto: Productos;
-
 }
 

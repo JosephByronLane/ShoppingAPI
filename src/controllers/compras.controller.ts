@@ -48,18 +48,17 @@ export const addToCart = async (req: Request, res: Response) => {
     if (!compraActiva){
         console.log("------------------------------------------------")
         console.log("User has no active purchase, creating new one")
-        console.log("------------------------------------------------")
-
         compraActiva = new Compras();
         compraActiva.usuario = user;
         compraActiva.nombre_del_cliente = user.nombre;
         await Compras.save(compraActiva);
+        console.log(compraActiva)
+        console.log("------------------------------------------------")
 
     }
     else{
         console.log("------------------------------------------------")
         console.log("User has an active purchase, using that one")
-        console.log(compraActiva)
         console.log("------------------------------------------------")
     }
     console.log("------------------------------------------------")
@@ -73,7 +72,6 @@ export const addToCart = async (req: Request, res: Response) => {
             producto: { id: productoId }, 
             compra: { id: compraActiva.id }
         }
-
     });
 
     if (detallePedido) {
@@ -86,19 +84,15 @@ export const addToCart = async (req: Request, res: Response) => {
 
     } else {
         detallePedido = new DetalladoCompras();
+        await DetalladoCompras.save(detallePedido);
         console.log("------------------------------------------------")
         console.log(`PRODUCT NOT FOUND: Making new product, adding ${cantidad} to a new detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
         detallePedido.compra=compraActiva;
         detallePedido.cantidad = 0;
         detallePedido.producto = producto;
-        console.log("------------------------------------------------")
-        console.log(`${detallePedido.cantidad}`)
-        console.log("------------------------------------------------")
         detallePedido.cantidad += cantidad;
-        console.log("------------------------------------------------")
-        console.log(`${detallePedido.cantidad}`)
-        console.log("------------------------------------------------")
+
 
     }
 
@@ -132,9 +126,13 @@ export const addToCart = async (req: Request, res: Response) => {
     console.log(`Saved producto`)
     console.log("------------------------------------------------")
 
-    const formattedCompra = formatPurchaseLimited(compraActiva);
+    //const formattedCompra = formatPurchaseLimited(compraActiva);
 
-    return res.json(formattedCompra);
+    compraActiva = await Compras.findOne({
+        where: { id: compraActiva.id },
+        relations: ['detalladoCompras']
+    });
+    return res.json(compraActiva);
 };
 
 
