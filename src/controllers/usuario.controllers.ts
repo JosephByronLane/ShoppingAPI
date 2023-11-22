@@ -1,17 +1,28 @@
 import { Request, Response } from "express"
 import { Usuario } from "../models/Usuario"
+const Joi = require('joi')
+
+const usuariosSchema = Joi.object({
+    nombre: Joi.string(),
+    correo_electronico: Joi.string()
+})
 
 export const createUser = async(req : Request,res : Response) => {
     try{
-        const {name} =req.body
+        const { error, value } = usuariosSchema.validate(req.query);
 
-        const usuario = new Usuario();
-        usuario.nombre = name
-        await usuario.save()
-        return res.json(usuario)
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        const filtro = value;
+
+        const productos = await Usuario.find({where: filtro});
+
+        return res.json(productos);
     }
     catch(error){
-        if(error instanceof Error)  return res.status(500).json({message: error.message})
+        if(error instanceof Error) return res.status(500).json({message: error.message})
     }
 }
 

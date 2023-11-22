@@ -1,12 +1,28 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { ProductosEnPromocion } from "../entities/ProductosEnPromocion"
+import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
 import { ResumeOptions } from "typeorm";
+const Joi = require('joi')
+
+const productosEPSchema = Joi.object({
+    nombre: Joi.string(),
+    descripcion: Joi.string(),
+    precio_en_promocion: Joi.number()
+});
 
 export const getProductoEPs = async (req: Request, res: Response) => {
     try{
-        const productoEPs = await ProductosEnPromocion.find();
-        return res.json(productoEPs)
+        const { error, value } = productosEPSchema.validate(req.query);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        const filtro = value;
+
+        const productos = await ProductosEnPromocion.find({where: filtro});
+
+        return res.json(productos);
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message: error.message})

@@ -1,13 +1,33 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { Productos } from "../entities/Productos"
+import { Productos } from "../models/Productos"
 import { ResumeOptions } from "typeorm";
+const Joi = require('joi')
+
+const productosSchema = Joi.object({
+    nombre: Joi.string(),
+    descripcion: Joi.string(),
+    precio: Joi.number(),
+    categoria: Joi.string(),
+    fabricante: Joi.string(),
+    cantidad_en_existencia: Joi.number(),
+    unidad_de_medida: Joi.string(),
+});
 
 // obtener productos pero falta la cosa de querys
 export const getProductos = async (req: Request, res: Response) => {
     try{
-        const productos = await Productos.find();
-        return res.json(productos)
+        const { error, value } = productosSchema.validate(req.query);
+
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
+        const filtro = value;
+
+        const productos = await Productos.find({where: filtro});
+
+        return res.json(productos);
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message: error.message})
