@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
 import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
-import { ResumeOptions } from "typeorm";
 import { Productos } from "../models/Productos";
 
 export const getProductoEPs = async (req: Request, res: Response) => {
@@ -65,7 +63,7 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
             console.log('-----------------------------------')
             console.log(`Product was not found.`);
             console.log('-----------------------------------')   
-            return res.status(404).json({message: `Product with id: ${idproducto} not found.`})
+            return res.status(404).json({message: `Product with id: ${id} not found.`})
         }
 
         promoProduct.activo = 0;
@@ -75,7 +73,7 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
         res.json({ 
             status:"Success",
             message:"Succesfully deleted.",
-           });
+        });
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message:error.message})

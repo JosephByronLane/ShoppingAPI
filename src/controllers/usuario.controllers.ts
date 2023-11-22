@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 
 export const createUser = async(req : Request,res : Response) => {
     try{
-        const {name, email, contrasenia} =req.body
+        const {name, correo_electronico, contrasenia} =req.body
 
         const usuario = new Usuario();
         const id = req.id;
@@ -19,15 +19,34 @@ export const createUser = async(req : Request,res : Response) => {
         }
         const contraseniaHasheada = await bcrypt.hash(contrasenia, 10);
 
+        if(!name){
+            return res.status(404).json({ message: 'Invalid usernamme.' });
+
+        }
+        if(!correo_electronico){
+            return res.status(404).json({ message: 'Invalid Email.' });
+        }
+        if(!contrasenia){
+            return res.status(404).json({ message: 'Invalid Password.' });
+        }
+
         usuario.nombre = name;
-        usuario.correo_electronico = email;
+        usuario.correo_electronico = correo_electronico;
         usuario.contrasenia = contraseniaHasheada;
         usuario.usuario_de_creacion = req.nombre;
         await setParameterFields(usuario, nombreUsuario, true);
 
 
         await usuario.save()
-        return res.json(usuario)
+        res.json({ 
+            status:"Success",
+            message:"Succesfully created User",
+            data: {
+                "id": usuario.id,
+                "nombre": usuario.nombre,
+                "correo_electronico" : usuario.correo_electronico,                
+            }
+           });
     }
     catch(error){
         if(error instanceof Error)  return res.status(500).json({message: error.message})
@@ -37,8 +56,17 @@ export const createUser = async(req : Request,res : Response) => {
 
 export const getUsers = async (req: Request, res: Response) =>{
     try{
-        const users = await Usuario.find();
-        return res.json(users)
+        const users = await Usuario.find({
+            where: {activo: 1},
+            select: ['id', 'nombre', 'correo_electronico'],
+        });
+        return res.json({
+            status: "Success",
+            message: "Retrieved all users.",
+            data:{
+                users
+            }
+        })
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message: error.message})
@@ -60,11 +88,40 @@ export const deleteUser = async (req: Request, res: Response)=>{
     try{
         const{id} = req.params
 
-        const result = await Usuario.delete({id:parseInt(id)})
-        if (result.affected ===0){
-            return res.status(404).json({message: "User not found"})
+        if(!id){
+            return res.status(404).json({message: `Error recieving User ID.`})
         }
-        return res.sendStatus(204)
+
+        console.log('-----------------------------------')
+        console.log(`Found ID: ${id} to delete.`);
+        console.log('-----------------------------------')   
+
+        let user  =await Usuario.findOne({
+            where:{
+                id: parseInt(id),
+                activo:1
+            }
+        })
+
+        console.log('-----------------------------------')
+        console.log(`Succesfully attempted to find the User.`);
+        console.log('-----------------------------------')   
+        if (!user){
+            console.log('-----------------------------------')
+            console.log(`User with id ${id} was not found.`);
+            console.log('-----------------------------------')   
+            return res.status(404).json({message: `User with id: ${id} not found.`})
+        }
+
+        user.activo = 0;
+        console.log('-----------------------------------')
+        console.log(`Users with id ${id} active succesfully set to 0.`);
+        console.log('-----------------------------------')   
+        Usuario.save(user)
+        res.json({ 
+            status:"Success",
+            message:"Succesfully deleted.",
+        });
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message:error.message})
@@ -72,17 +129,49 @@ export const deleteUser = async (req: Request, res: Response)=>{
 }
 
 export const getUser = async(req:Request, res:Response)=>{
-try{
-        //MISSING ERROR HANDLING, IM LAZY SRY
-        const user = await Usuario.findOneBy({id:parseInt(req.params.id)})
-        return res.json(user)
-}
-catch(error){
-    if(error instanceof Error){
-        return res.status(500).json({message: error.message})
-    }
-}
+    try{
+        const{id} = req.params
 
+        if(!id){
+            return res.status(404).json({message: `Error recieving User ID.`})
+        }
+
+        console.log('-----------------------------------')
+        console.log(`Found ID: ${id} to show.`);
+        console.log('-----------------------------------')   
+
+        let user  =await Usuario.findOne({
+            where:{
+                id: parseInt(id),
+                activo:1
+            },
+            select: ['id', 'nombre', 'correo_electronico'],
+        })
+
+        console.log('-----------------------------------')
+        console.log(`Succesfully attempted to find the User.`);
+        console.log('-----------------------------------')   
+        if (!user){
+            console.log('-----------------------------------')
+            console.log(`User with id ${id} was not found.`);
+            console.log('-----------------------------------')   
+            return res.status(404).json({message: `User with id: ${id} not found.`})
+        }
+
+        console.log('-----------------------------------')
+        console.log(`Users with id ${id} active was succesfully found..`);
+        console.log('-----------------------------------')   
+
+        res.json({ 
+            status:"Success",
+            message:"Succesfully deleted.",
+            data: user
+        });
+        
+    }
+    catch(error){
+        if(error instanceof Error) return res.status(500).json({message:error.message})
+    }
 }
 
 export const getUserByUsername = async (req: Request, res: Response) => {

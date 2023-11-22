@@ -3,7 +3,6 @@ import { getRepository } from "typeorm";
 import { Productos } from "../models/Productos"
 import { ResumeOptions } from "typeorm";
 
-// obtener productos pero falta la cosa de querys
 export const getProductos = async (req: Request, res: Response) => {
     try{
         const productos = await Productos.find();
