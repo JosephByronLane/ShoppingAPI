@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { Productos } from "../models/Productos"
-import { validate } from 'class-validator';
 import { validateEntity } from "./validation.controller";
 
 
@@ -67,7 +66,6 @@ export const updateProducto = async (req: Request, res: Response) =>{
 }
 
 
-// borrar el producto 
 export const deleteProducto = async (req: Request, res: Response) => {
     try{
         const{id} = req.params
@@ -101,7 +99,7 @@ export const deleteProducto = async (req: Request, res: Response) => {
         console.log('-----------------------------------')
         console.log(`Producto with id ${id} active succesfully set to 0.`);
         console.log('-----------------------------------')   
-        
+
         Productos.save(producto)
         res.json({ 
             status:"Success",
