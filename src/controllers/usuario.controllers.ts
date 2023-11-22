@@ -14,13 +14,15 @@ export const createUser = async(req : Request,res : Response) => {
         if (typeof nombreUsuario !== 'string') {
             return res.status(401).json({ message: 'User name is undefined' });
         }
-
+        if (typeof req.nombre !== 'string') {
+            return res.status(400).json({ message: 'Error retrieving Username from token. Try logging in again.' });
+        }
         const contraseniaHasheada = await bcrypt.hash(contrasenia, 10);
 
         usuario.nombre = name;
         usuario.correo_electronico = email;
         usuario.contrasenia = contraseniaHasheada;
-
+        usuario.usuario_de_creacion = req.nombre;
         await setParameterFields(usuario, nombreUsuario, true);
 
 

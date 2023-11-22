@@ -2,7 +2,7 @@ import "reflect-metadata"
 import app from "./app"
 import {AppDataSource} from "./db"
 import {createAdminUser} from "./admin-seed"
-import {seedProducts} from "./add-products"
+import {seedProducts, seedPromotionalProducts} from "./add-products"
 export const needlogin = true;
 
 import dotenv from 'dotenv';
@@ -23,6 +23,10 @@ async function main(){
         console.log('-----------------------------------')
         await seedProducts();
 
+        console.log('-----------------------------------')
+        console.log('Seeding products on promotion')
+        console.log('-----------------------------------')
+        await seedPromotionalProducts();
 
         app.listen(3000)
         console.log('-----------------------------------')

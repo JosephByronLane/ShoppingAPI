@@ -22,7 +22,7 @@ export class ProductosEnPromocion extends BaseEntity{
     @Column({ type: 'datetime', nullable: true })
     fecha_de_finalizacion: Date;
 
-    @Column({ type: 'tinyint', nullable: true })
+    @Column({ type: 'tinyint', nullable: true, default:1})
     activo: number;
 
     @Column({ type: 'varchar', length: 255, nullable: true })

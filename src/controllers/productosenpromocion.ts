@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
 import { ResumeOptions } from "typeorm";
+import { Productos } from "../models/Productos";
 
 export const getProductoEPs = async (req: Request, res: Response) => {
     try{
@@ -53,12 +54,28 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
 
 export const createProductoEP = async (req: Request, res: Response) => {
     try{
-        const {nombre} = req.body
-        console.log(req.body)
-        const producto = new ProductosEnPromocion();
-        producto.nombre = nombre
-        await producto.save()
-        return res.json(producto)
+        const {nombre, descripcion, precio_en_promocion, fecha_de_inicio, fecha_de_finalizacion, idproducto} = req.body
+        const promoProduct = new ProductosEnPromocion();
+        promoProduct.nombre = nombre
+        promoProduct.descripcion = descripcion;
+        promoProduct.precio_en_promocion = precio_en_promocion;
+        promoProduct.fecha_de_inicio = new Date(fecha_de_inicio);
+        promoProduct.fecha_de_finalizacion = new Date(fecha_de_finalizacion);
+
+        const producto = await Productos.findOne({
+            where: {
+                id: idproducto, 
+            },
+            relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] 
+        });
+
+        if (!producto) {
+            return res.status(404).json({ message: `Product with id: ${idproducto} not found.` });
+        }
+        promoProduct.producto = producto;
+        await ProductosEnPromocion.save(promoProduct);
+        await promoProduct.save()
+        return res.json(promoProduct)
     }
     catch(error){
         if(error instanceof Error)  return res.status(500).json({message: error.message})

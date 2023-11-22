@@ -1,5 +1,6 @@
 import { DriverPackageNotInstalledError, getRepository } from 'typeorm';
 import { Productos } from './models/Productos'; // adjust the import path according to your project structure
+import { ProductosEnPromocion } from './models/ProductosEnPromocion';
 
 // categories:
 // accomodation
@@ -189,6 +190,32 @@ const productData = [
         "activo": 1
       }
 ];
+const promoProducts = [
+  {
+      "nombre": "Tropical Paradise Adventure",
+      "descripcion": "Special offer on our week-long adventure in a tropical paradise.",
+      "precio_en_promocion": 1299.99,
+      "fecha_de_inicio": "2023-12-01T00:00:00Z",
+      "fecha_de_finalizacion": "2023-12-31T23:59:59Z",
+      "producto_id": 1
+  },
+  {
+      "nombre": "European Highlights Tour",
+      "descripcion": "Limited time discount on our 10-day European tour.",
+      "precio_en_promocion": 1999.99,
+      "fecha_de_inicio": "2023-12-01T00:00:00Z",
+      "fecha_de_finalizacion": "2023-12-31T23:59:59Z",
+      "producto_id": 2
+  },
+  {
+      "nombre": "Safari Expedition",
+      "descripcion": "Promotional price for our Serengeti safari experience.",
+      "precio_en_promocion": 2799.99,
+      "fecha_de_inicio": "2023-12-01T00:00:00Z",
+      "fecha_de_finalizacion": "2023-12-31T23:59:59Z",
+      "producto_id": 3
+  }
+]
 
 export async function seedProducts() {
     try {
@@ -196,27 +223,24 @@ export async function seedProducts() {
             const existingProduct = await Productos.findOneBy({ nombre: data.nombre });
     
             if (!existingProduct) {
-                for (const data of productData) {
-                    const producto = new Productos();
-                    producto.nombre = data.nombre;
-                    producto.descripcion = data.descripcion;
-                    producto.precio = data.precio;
-                    producto.categoria = data.categoria;
-                    producto.fabricante = data.fabricante;
-                    producto.cantidad_en_existencia = data.cantidad_en_existencia;
-                    producto.unidad_de_medida = data.unidad_de_medida;
-                    producto.activo = data.activo !== undefined ? data.activo : 1; 
-        
-                    await Productos.save(producto);
-                    console.log('-----------------------------------')
-                    console.log(`Added: ${data.nombre}`);
-                    console.log('-----------------------------------')
-
-                }
+                  const producto = new Productos();
+                  producto.nombre = data.nombre;
+                  producto.descripcion = data.descripcion;
+                  producto.precio = data.precio;
+                  producto.categoria = data.categoria;
+                  producto.fabricante = data.fabricante;
+                  producto.cantidad_en_existencia = data.cantidad_en_existencia;
+                  producto.unidad_de_medida = data.unidad_de_medida;
+                  producto.activo = data.activo !== undefined ? data.activo : 1; 
+      
+                  await Productos.save(producto);
+                  console.log('-----------------------------------')
+                  console.log(`Added: ${data.nombre} to productos`);
+                  console.log('-----------------------------------')                
             } 
             else {
                 console.log('-----------------------------------')
-                console.log(`Product already exists: ${data.nombre}`);
+                console.log(`Product already exists: ${data.nombre} in productos`);
                 console.log('-----------------------------------')
             }
         }
@@ -225,4 +249,31 @@ export async function seedProducts() {
     }
 }
 
-
+export async function seedPromotionalProducts(){
+  try {
+    for (const data of promoProducts) {
+      const existingProduct = await ProductosEnPromocion.findOneBy({ nombre: data.nombre });
+  
+      if (!existingProduct) {
+            const promoProduct = new ProductosEnPromocion();
+            promoProduct.nombre = data.nombre;
+            promoProduct.descripcion = data.descripcion;
+            promoProduct.precio_en_promocion = data.precio_en_promocion;
+            promoProduct.fecha_de_inicio = new Date(data.fecha_de_inicio);
+            promoProduct.fecha_de_finalizacion = new Date(data.fecha_de_finalizacion);
+            promoProduct.producto = { id: data.producto_id } as any;
+            await ProductosEnPromocion.save(promoProduct);
+            console.log('-----------------------------------')
+            console.log(`Added: ${data.nombre} into ProductosEnPromocion`);
+            console.log('-----------------------------------')            
+      } 
+      else {
+          console.log('-----------------------------------')
+          console.log(`Product already exists: ${data.nombre} in ProductosEnPromocion`);
+          console.log('-----------------------------------')
+      }
+    }
+  } catch (error) {
+  console.error('Error seeding products:', error);
+  }
+};
