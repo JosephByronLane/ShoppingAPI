@@ -1,4 +1,13 @@
 {
+  "compilerOptions": {
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types"
+    ],
+    "types": [
+      "express"
+    ]
+  },
   "name": "customapi",
   "version": "1.0.0",
   "description": "CustomAPI Using JS with TS for Web",
@@ -7,9 +16,9 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +26,8 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

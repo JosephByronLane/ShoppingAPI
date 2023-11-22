@@ -5,7 +5,7 @@ import { tryLogin} from '../controllers/auth.controllers'
 const router = Router()
 
 
-router.post('/login', tryLogin)
+router.post('/equipo-2/login', tryLogin)
 
 
 

@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductosEnPromocion = void 0;
 const typeorm_1 = require("typeorm");
 const Productos_1 = require("./Productos");
-const TipoPromocion_1 = require("./TipoPromocion");
 let ProductosEnPromocion = class ProductosEnPromocion extends typeorm_1.BaseEntity {
 };
 exports.ProductosEnPromocion = ProductosEnPromocion;
@@ -57,11 +56,6 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'producto_id' }),
     __metadata("design:type", Productos_1.Productos)
 ], ProductosEnPromocion.prototype, "producto", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => TipoPromocion_1.TipoPromocion),
-    (0, typeorm_1.JoinColumn)({ name: 'promocion_id' }),
-    __metadata("design:type", TipoPromocion_1.TipoPromocion)
-], ProductosEnPromocion.prototype, "promocion", void 0);
 exports.ProductosEnPromocion = ProductosEnPromocion = __decorate([
     (0, typeorm_1.Entity)('productosenpromocion')
 ], ProductosEnPromocion);

@@ -36,7 +36,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Compras.prototype, "total_de_productos", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'datetime', nullable: true }),
+    (0, typeorm_1.CreateDateColumn)({ type: 'datetime', nullable: true }),
     __metadata("design:type", Date)
 ], Compras.prototype, "fecha_de_creacion", void 0);
 __decorate([
@@ -44,7 +44,7 @@ __decorate([
     __metadata("design:type", String)
 ], Compras.prototype, "usuario_de_creacion", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'datetime', nullable: true }),
+    (0, typeorm_1.UpdateDateColumn)({ type: 'datetime', nullable: true }),
     __metadata("design:type", Date)
 ], Compras.prototype, "fecha_de_actualizacion", void 0);
 __decorate([

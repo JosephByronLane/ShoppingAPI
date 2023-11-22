@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Productos = void 0;
 const typeorm_1 = require("typeorm");
-const Usuario_1 = require("./Usuario");
+const CarritoItem_1 = require("./CarritoItem");
 let Productos = class Productos extends typeorm_1.BaseEntity {
 };
 exports.Productos = Productos;
@@ -48,7 +48,7 @@ __decorate([
     __metadata("design:type", String)
 ], Productos.prototype, "unidad_de_medida", void 0);
 __decorate([
-    (0, typeorm_1.Column)('datetime', { nullable: true }),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Productos.prototype, "fecha_de_creacion", void 0);
 __decorate([
@@ -56,7 +56,7 @@ __decorate([
     __metadata("design:type", String)
 ], Productos.prototype, "usuario_de_creacion", void 0);
 __decorate([
-    (0, typeorm_1.Column)('datetime', { nullable: true }),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Productos.prototype, "fecha_de_actualizacion", void 0);
 __decorate([
@@ -68,18 +68,13 @@ __decorate([
     __metadata("design:type", Number)
 ], Productos.prototype, "activo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
-    __metadata("design:type", String)
-], Productos.prototype, "extra1", void 0);
+    (0, typeorm_1.OneToMany)(() => CarritoItem_1.CarritoItem, carritoItem => carritoItem.producto),
+    __metadata("design:type", Array)
+], Productos.prototype, "carritoItems", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
     __metadata("design:type", String)
 ], Productos.prototype, "extra2", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => Usuario_1.Usuario),
-    (0, typeorm_1.JoinColumn)({ name: 'id_usuario' }),
-    __metadata("design:type", Usuario_1.Usuario)
-], Productos.prototype, "usuario", void 0);
 exports.Productos = Productos = __decorate([
     (0, typeorm_1.Entity)('productos')
 ], Productos);

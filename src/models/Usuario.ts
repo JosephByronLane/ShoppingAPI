@@ -1,7 +1,7 @@
-import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity} from 'typeorm'
+import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,CreateDateColumn, BaseEntity, OneToOne, JoinTable} from 'typeorm'
 
 import { Compras } from './Compras';
-import { Productos } from './Productos';
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
 @Entity('Usuario')
 export class Usuario extends BaseEntity{
@@ -9,12 +9,17 @@ export class Usuario extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
+    @IsNotEmpty()
+    @IsString()
     @Column({ type: 'varchar', length: 255, nullable: true })
     nombre: string;
-
+    
+    @IsNotEmpty()
+    @IsEmail()
     @Column({ type: 'varchar', length: 255, nullable: true, unique: true})
     correo_electronico: string;
 
+    @Length(5,255)
     @Column({ type: 'varchar', length: 255, nullable: true })
     contrasenia: string;
 
@@ -39,10 +44,7 @@ export class Usuario extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
 
-    @OneToMany(() => Compras, compra => compra.usuario)
+    @OneToMany(() => Compras, compras => compras.usuario)
     compras: Compras[];
-    
-    @OneToMany(() => Productos, producto => producto.usuario)
-    productos: Productos[];
 
 }

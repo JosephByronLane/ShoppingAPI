@@ -9,26 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TipoPromocion = void 0;
+exports.CarritoItem = void 0;
 const typeorm_1 = require("typeorm");
-//-------------------------
-//NOT USED
-//----------------------------
-let TipoPromocion = class TipoPromocion extends typeorm_1.BaseEntity {
+const Productos_1 = require("./Productos");
+const Usuario_1 = require("./Usuario");
+let CarritoItem = class CarritoItem extends typeorm_1.BaseEntity {
 };
-exports.TipoPromocion = TipoPromocion;
+exports.CarritoItem = CarritoItem;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], TipoPromocion.prototype, "id", void 0);
+], CarritoItem.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
-    __metadata("design:type", String)
-], TipoPromocion.prototype, "Promocion", void 0);
+    (0, typeorm_1.ManyToOne)(() => Productos_1.Productos, producto => producto.carritoItems),
+    __metadata("design:type", Productos_1.Productos)
+], CarritoItem.prototype, "producto", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
-    __metadata("design:type", String)
-], TipoPromocion.prototype, "Descripcion", void 0);
-exports.TipoPromocion = TipoPromocion = __decorate([
-    (0, typeorm_1.Entity)('tipopromocion')
-], TipoPromocion);
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], CarritoItem.prototype, "quantity", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Usuario_1.Usuario, usuario => usuario.carrito),
+    __metadata("design:type", Usuario_1.Usuario)
+], CarritoItem.prototype, "usuario", void 0);
+exports.CarritoItem = CarritoItem = __decorate([
+    (0, typeorm_1.Entity)('carrito')
+], CarritoItem);
+//@OneToOne(()=> Carrito, carrito => carrito.usuario)

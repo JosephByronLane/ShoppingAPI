@@ -8,14 +8,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findUserByUsername = exports.getUserByUsername = exports.getUser = exports.deleteUser = exports.updateUser = exports.getUsers = exports.createUser = void 0;
 const Usuario_1 = require("../models/Usuario");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name } = req.body;
+        const { name, email, contrasenia } = req.body;
         const usuario = new Usuario_1.Usuario();
+        const id = req.id;
+        const nombreUsuario = req.nombre;
+        if (typeof nombreUsuario !== 'string') {
+            return res.status(401).json({ message: 'User name is undefined' });
+        }
+        const contraseniaHasheada = yield bcrypt_1.default.hash(contrasenia, 10);
         usuario.nombre = name;
+        usuario.correo_electronico = email;
+        usuario.contrasenia = contraseniaHasheada;
+        yield setParameterFields(usuario, nombreUsuario, true);
         yield usuario.save();
         return res.json(usuario);
     }
@@ -39,7 +52,6 @@ exports.getUsers = getUsers;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const user = yield Usuario_1.Usuario.findOneBy({ id: parseInt(req.params.id) });
-    console.log(user);
     if (!user)
         return res.status(404).json({ message: 'User does not exist' });
     yield Usuario_1.Usuario.update({ id: parseInt(id) }, req.body);
@@ -102,3 +114,11 @@ const findUserByUsername = (nombre) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.findUserByUsername = findUserByUsername;
+function setParameterFields(entity, nombresIuario, isNew = false) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const userField = isNew ? 'usuario_de_creacion' : 'usuario_de_actualizacion';
+        entity[userField] = nombresIuario;
+        yield entity.save();
+        return entity;
+    });
+}
