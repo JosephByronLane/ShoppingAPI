@@ -6,7 +6,11 @@ import { Productos } from "../models/Productos";
 
 export const getProductoEPs = async (req: Request, res: Response) => {
     try{
-        const productoEPs = await ProductosEnPromocion.find();
+        const productoEPs = await ProductosEnPromocion.find({
+            where:{
+                activo:1
+            }
+        });
         return res.json(productoEPs)
     }
     catch(error){
@@ -39,13 +43,20 @@ export const updateProductoEP = async (req: Request, res: Response) =>{
 
 export const deleteProductoEP = async (req: Request, res: Response) => {
     try{
-        const{id} = req.params
+        const{idproducto} = req.params
 
-        const result = await ProductosEnPromocion.delete({id:parseInt(id)})
-        if (result.affected ===0){
-            return res.status(404).json({message: "Producto not found"})
+
+        var promoProduct  =await ProductosEnPromocion.findOne({
+            where:{
+                id: parseInt(idproducto)
+            }
+        })
+        if (!promoProduct){
+            return res.status(404).json({message: `Product with id: ${idproducto} not found.`})
         }
-        return res.sendStatus(204)
+
+        promoProduct.activo = 0;
+
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message:error.message})
@@ -62,14 +73,24 @@ export const createProductoEP = async (req: Request, res: Response) => {
         promoProduct.fecha_de_inicio = new Date(fecha_de_inicio);
         promoProduct.fecha_de_finalizacion = new Date(fecha_de_finalizacion);
 
+        console.log('-----------------------------------')
+        console.log(`Found all base variables`);
+        console.log('-----------------------------------')   
+
         const producto = await Productos.findOne({
             where: {
                 id: idproducto, 
-            },
-            relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] 
+            }           
         });
 
+        console.log('-----------------------------------')
+        console.log(`Was able to retrieve product based on ID`);
+        console.log('-----------------------------------')  
+
         if (!producto) {
+            console.log('-----------------------------------')
+            console.log(`Product was not found`);
+            console.log('-----------------------------------')  
             return res.status(404).json({ message: `Product with id: ${idproducto} not found.` });
         }
         promoProduct.producto = producto;
