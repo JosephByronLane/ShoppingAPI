@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
 import { Productos } from "../models/Productos"
-import { ResumeOptions } from "typeorm";
+import { validate } from 'class-validator';
+import { validateEntity } from "./validation.controller";
+
 
 export const getProductos = async (req: Request, res: Response) => {
     try{
@@ -55,32 +56,23 @@ export const deleteProducto = async (req: Request, res: Response) => {
 
 export const createProducto = async (req: Request, res: Response) => {
     try {
-        const {
-            nombre,
-            descripcion,
-            precio,
-            categoria,
-            fabricante,
-            cantidad_en_existencia,
-            unidad_de_medida,
-            //activo goes here but its off by default
-            extra2
-        } = req.body;
-
         const producto = new Productos();
-        producto.nombre = nombre;
-        producto.descripcion = descripcion;
-        producto.precio = precio;
-        producto.categoria = categoria;
-        producto.fabricante = fabricante;
-        producto.cantidad_en_existencia = cantidad_en_existencia;
-        producto.unidad_de_medida = unidad_de_medida;
-        producto.extra2 = extra2;
+
+        const errors = await validateEntity(producto, req.body);
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
 
         await producto.save();
 
-        // Return the created product
-        return res.json(producto);
+        return res.json({ 
+            status:"Success",
+            message:"Succesfully created Product",
+            data: {
+                id: producto.id,
+                nombre: producto.nombre
+            }
+           });
         } catch (error) {
             if (error instanceof Error) {
             return res.status(500).json({ message: error.message });

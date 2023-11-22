@@ -10,6 +10,7 @@ import {
     OneToMany,
     OneToOne
 } from 'typeorm';
+import { IsDate, IsNotEmpty, IsNumber, IsPositive, IsString, Length } from 'class-validator';
 import { DetalladoCompras } from './DetalladoCompras';
 @Entity('productos')
 export class Productos extends BaseEntity{
@@ -17,24 +18,38 @@ export class Productos extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
+    @IsNotEmpty()
+    @IsString()
     @Column({ type: 'varchar', length: 255, nullable: true })
     nombre: string;
 
+    @IsNotEmpty()
+    @IsString()
     @Column('text', { nullable: true })
     descripcion: string;
 
+    @IsNotEmpty()
+    @IsNumber()
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
     precio: number;
 
+    @IsNotEmpty()
+    @IsString()
     @Column({ type: 'varchar', length: 255, nullable: true })
     categoria: string;
 
+    @IsNotEmpty()
+    @IsString()
     @Column({ type: 'varchar', length: 255, nullable: true })
     fabricante: string;
-
+    
+    @IsNotEmpty()
+    @IsNumber()
     @Column('int', { nullable: false, default: 0})
     cantidad_en_existencia: number;
 
+    @IsNotEmpty()
+    @IsString()
     @Column({ type: 'varchar', length: 50, nullable: true })
     unidad_de_medida: string;
 

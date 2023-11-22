@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { ProductosEnPromocion } from "../models/ProductosEnPromocion"
 import { Productos } from "../models/Productos";
+import { validateEntity } from "./validation.controller";
+
 
 export const getProductoEPs = async (req: Request, res: Response) => {
     try{
@@ -82,13 +84,14 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
 
 export const createProductoEP = async (req: Request, res: Response) => {
     try{
-        const {nombre, descripcion, precio_en_promocion, fecha_de_inicio, fecha_de_finalizacion, idproducto} = req.body
+        const {idproducto} = req.body
         const promoProduct = new ProductosEnPromocion();
-        promoProduct.nombre = nombre
-        promoProduct.descripcion = descripcion;
-        promoProduct.precio_en_promocion = precio_en_promocion;
-        promoProduct.fecha_de_inicio = new Date(fecha_de_inicio);
-        promoProduct.fecha_de_finalizacion = new Date(fecha_de_finalizacion);
+
+        const errors = await validateEntity(promoProduct, req.body);
+        
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
 
         console.log('-----------------------------------')
         console.log(`Found all base variables`);
@@ -113,7 +116,14 @@ export const createProductoEP = async (req: Request, res: Response) => {
         promoProduct.producto = producto;
         await ProductosEnPromocion.save(promoProduct);
         await promoProduct.save()
-        return res.json(promoProduct)
+        return res.json({ 
+            status:"Success",
+            message:"Succesfully created Promotional product",
+            data: {
+                "id": promoProduct.id,
+                "nombre": promoProduct.nombre            
+            }
+           });
     }
     catch(error){
         if(error instanceof Error)  return res.status(500).json({message: error.message})

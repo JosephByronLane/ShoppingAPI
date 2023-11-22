@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { Usuario } from "../models/Usuario"
 import { BaseEntity } from "typeorm"
 import bcrypt from 'bcrypt';
+import { validateEntity } from "./validation.controller";
 
 export const createUser = async(req : Request,res : Response) => {
     try{
@@ -11,24 +12,20 @@ export const createUser = async(req : Request,res : Response) => {
         const id = req.id;
         const nombreUsuario = req.nombre
         
+        const errors = await validateEntity(usuario, req.body);
+        
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
+
         if (typeof nombreUsuario !== 'string') {
             return res.status(401).json({ message: 'User name is undefined' });
         }
         if (typeof req.nombre !== 'string') {
             return res.status(400).json({ message: 'Error retrieving Username from token. Try logging in again.' });
         }
+        
         const contraseniaHasheada = await bcrypt.hash(contrasenia, 10);
-
-        if(!name){
-            return res.status(404).json({ message: 'Invalid usernamme.' });
-
-        }
-        if(!correo_electronico){
-            return res.status(404).json({ message: 'Invalid Email.' });
-        }
-        if(!contrasenia){
-            return res.status(404).json({ message: 'Invalid Password.' });
-        }
 
         usuario.nombre = name;
         usuario.correo_electronico = correo_electronico;
@@ -167,7 +164,7 @@ export const getUser = async(req:Request, res:Response)=>{
             message:"Succesfully deleted.",
             data: user
         });
-        
+
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message:error.message})
