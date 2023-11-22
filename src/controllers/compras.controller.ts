@@ -92,8 +92,10 @@ export const addToCart = async (req: Request, res: Response) => {
         where: { id: compraActiva.id },
         relations: ['detalladoCompras']
     });
+    
+    const formattedCompra = formatPurchaseLimited(compraActiva);
 
-    return res.json(compraActiva);
+    return res.json(formattedCompra);
 };
 
 
@@ -108,7 +110,19 @@ export const getCartItems = async (req: Request, res: Response) => {
         relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto']
     });
 
-    return res.json(compra);
+    if (!compra) {
+        return res.status(404).json({ message: "Compra not found" });
+    }
+
+    const formattedCompra = formatPurchaseFull(compra);
+
+    return res.json({
+        status: "Success",
+        message: "Found all purchases",
+        data: {
+            formattedCompra
+        }
+    });
 };
 
 export const getCartItem = async (req: Request, res: Response) => {
@@ -214,4 +228,44 @@ export const cancelarPedido = async (req: Request, res: Response) => {
     }
 
     compraActiva.status="Cancelado"
+};
+const formatPurchaseLimited = (compra) => {
+    return {
+        id: compra.id,
+        descripcion: compra.descripcion,
+        nombre_del_cliente: compra.nombre_del_cliente,
+        precio_total: compra.precio_total,
+        total_de_productos: compra.total_de_productos,
+        status: compra.status,
+        detalladoCompras: compra.detalladoCompras.map(dc => ({
+            id: dc.id,
+            cantidad: dc.cantidad
+        }))
+    };
+};
+const formatPurchaseFull = (compra) => {//even though theres an error it seems to work lmao
+    return {
+        id: compra.id,
+        descripcion: compra.descripcion,
+        nombre_del_cliente: compra.nombre_del_cliente,
+        precio_total: compra.precio_total,
+        total_de_productos: compra.total_de_productos,
+        status: compra.status,
+        usuario: {
+            id: compra.usuario.id,
+            nombre: compra.usuario.nombre,
+        },
+        detalladoCompras: compra.detalladoCompras.map(dc => ({
+            id: dc.id,
+            cantidad: dc.cantidad,
+            producto: {
+                id: dc.producto.id,
+                nombre: dc.producto.nombre,
+                precio: dc.producto.precio,
+                categoria: dc.producto.categoria,
+                fabricante: dc.producto.fabricante,
+                cantidad_en_existencia: dc.producto.cantidad_en_existencia
+            }
+        }))
+    };
 };

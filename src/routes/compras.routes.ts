@@ -11,6 +11,6 @@ router.get('/equipo-2/purchases/:id', verifyToken, getCartItem)
 router.delete('/equipo-2/purchases', verifyToken, removeFromCart)
 router.put('/equipo-2/purchases', verifyToken, updateCartItem)
 
-router.post('/equipo-2/purchases/finalizar', verifyToken, finalizarCompra)
-router.post('/equipo-2/purchases/finalizar', verifyToken, cancelarPedido)
+router.post('/equipo-2/purchases/finalize', verifyToken, finalizarCompra)
+router.post('/equipo-2/purchases/finalize', verifyToken, cancelarPedido)
 export default router
