@@ -3,7 +3,6 @@ import { DetalladoCompras } from '../models/DetalladoCompras';
 import { Productos } from '../models/Productos';
 import { Usuario } from '../models/Usuario';
 import { Compras } from '../models/Compras';
-import { Entity } from 'typeorm';
 
 export const addToCart = async (req: Request, res: Response) => {
     
@@ -16,12 +15,20 @@ export const addToCart = async (req: Request, res: Response) => {
     const user = await Usuario.findOneBy({id: usuarioid});
 
     console.log("Found related data.")
+
+    if (typeof cantidad !== 'number') {
+        return res.status(404).json({ message: `Cantidad must be a number.` });
+
+    }
+
     if (!producto) {
         return res.status(404).json({ message: 'Product not found' });
     }
+
     if (!user) {
         return res.status(404).json({ message: 'Error finding user (you).' });
     }
+
     if (producto.cantidad_en_existencia <  cantidad){
         return res.status(404).json({ message: `Not enough available in stock. Only ${producto.cantidad_en_existencia} available.` });
     }
@@ -45,6 +52,7 @@ export const addToCart = async (req: Request, res: Response) => {
 
         compraActiva = new Compras();
         compraActiva.usuario = user;
+        compraActiva.nombre_del_cliente = user.nombre;
         await Compras.save(compraActiva);
 
     }
@@ -72,27 +80,58 @@ export const addToCart = async (req: Request, res: Response) => {
         console.log("------------------------------------------------")
         console.log(`PRODUCT FOUND: Found product in cart, adding ${cantidad} to detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
-        detallePedido.cantidad += parseInt(cantidad);
+        detallePedido.cantidad += cantidad;
+        console.log(`${detallePedido.cantidad}`)
+        console.log("------------------------------------------------")
+
     } else {
         detallePedido = new DetalladoCompras();
         console.log("------------------------------------------------")
         console.log(`PRODUCT NOT FOUND: Making new product, adding ${cantidad} to a new detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
         detallePedido.compra=compraActiva;
+        detallePedido.cantidad = 0;
         detallePedido.producto = producto;
-        detallePedido.cantidad = parseInt(cantidad);
+        console.log("------------------------------------------------")
+        console.log(`${detallePedido.cantidad}`)
+        console.log("------------------------------------------------")
+        detallePedido.cantidad += cantidad;
+        console.log("------------------------------------------------")
+        console.log(`${detallePedido.cantidad}`)
+        console.log("------------------------------------------------")
+
     }
 
-    await DetalladoCompras.save(detallePedido);
+    if (typeof compraActiva.precio_total !== 'number') {
+        compraActiva.precio_total = parseFloat(compraActiva.precio_total) || 0;
+    }
+
+    let price = typeof producto.precio === 'number' ? producto.precio : parseFloat(producto.precio);
+
+
+    const totalPriceForProduct = price * cantidad;
+
+    compraActiva.precio_total += totalPriceForProduct;
+    
+    compraActiva.total_de_productos += cantidad
     
     producto.cantidad_en_existencia -= cantidad;
-    await Productos.save(producto);
 
-    compraActiva = await Compras.findOne({
-        where: { id: compraActiva.id },
-        relations: ['detalladoCompras']
-    });
+    await Compras.save(compraActiva)
+    console.log("------------------------------------------------")
+    console.log(`Saved compra`)
+    console.log("------------------------------------------------")
     
+    await DetalladoCompras.save(detallePedido);
+    console.log("------------------------------------------------")
+    console.log(`Saved detallePedido`)
+    console.log("------------------------------------------------")
+    
+    await Productos.save(producto);
+    console.log("------------------------------------------------")
+    console.log(`Saved producto`)
+    console.log("------------------------------------------------")
+
     const formattedCompra = formatPurchaseLimited(compraActiva);
 
     return res.json(formattedCompra);
@@ -190,23 +229,32 @@ export const updateCartItem = async (req: Request, res: Response) => {
 export const finalizarCompra = async (req: Request, res: Response) => {
     const usuarioid = req.id;
 
+    console.log("------------------------------------------------")
+    console.log("Got user ID")
+    console.log("------------------------------------------------")
+
     const compraActiva = await Compras.findOne({
         where: {
             usuario: { id: usuarioid }, 
             activo: true
-        },
-        relations: ['usuario', 'detalladoCompras', 'detalladoCompras.producto'] // Add nested relation
+        }
     });
     if (!compraActiva){
         console.log("------------------------------------------------")
         console.log("User has no active purchases.")
         console.log("------------------------------------------------")
         return res.status(404).json({ message: `User with ID: ${usuarioid} has no active purchases.` });
-
     }
-
     compraActiva.status="Terminado"
     compraActiva.activo=false;
+    Compras.save(compraActiva)
+    return res.json({ 
+        status:"Success",
+        message:"Succesfully finalized purchase",
+        data: {
+            "id": compraActiva.id             
+        }
+       }); 
 };
 
 export const cancelarPedido = async (req: Request, res: Response) => {

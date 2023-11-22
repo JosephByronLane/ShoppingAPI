@@ -14,10 +14,10 @@ export class Compras extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     nombre_del_cliente: string;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    @Column({ type: 'decimal', precision: 10, scale: 2, default:0 })
     precio_total: number;
 
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int', default:0})
     total_de_productos: number;
 
     @CreateDateColumn({ type: 'datetime', nullable: true })

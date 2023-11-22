@@ -11,8 +11,7 @@ export class DetalladoCompras extends BaseEntity{
     id: number;
 
     @IsNumber()
-    @IsNotEmpty()
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int', default: 0 })
     cantidad: number;
     
     @CreateDateColumn({ type: 'datetime', nullable: true })
