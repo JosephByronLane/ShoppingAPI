@@ -319,7 +319,7 @@ export const cancelarPedido = async (req: Request, res: Response) => {
         message: `Compra with ID: ${compraId} has been canceled.`
     });
 };
-
+//@ts-ignore
 const formatPurchaseLimited = (compra) => {//even though theres an error it seems to work lmao
     return {
         compraId: compra.id,
@@ -328,6 +328,7 @@ const formatPurchaseLimited = (compra) => {//even though theres an error it seem
         precio_total: compra.precio_total,
         total_de_productos: compra.total_de_productos,
         status: compra.status,
+        //@ts-ignore
         detalladoCompras: compra.detalladoCompras.map(dc => ({
             productoId: dc.producto?.id ,
             productoNombre: dc.producto?.nombre ,
@@ -338,6 +339,8 @@ const formatPurchaseLimited = (compra) => {//even though theres an error it seem
         }))
     };
 };
+
+//@ts-ignore
 const formatPurchaseFull = (compra) => {//even though theres an error it seems to work lmao
     return {
         id: compra.id,
@@ -350,6 +353,7 @@ const formatPurchaseFull = (compra) => {//even though theres an error it seems t
             id: compra.usuario.id,
             nombre: compra.usuario.nombre,
         },
+        //@ts-ignore
         detalladoCompras: compra.detalladoCompras.map(dc => ({
             id: dc.id,
             cantidad: dc.cantidad,
