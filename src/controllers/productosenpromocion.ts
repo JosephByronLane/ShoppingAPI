@@ -7,7 +7,6 @@ const Joi = require('joi')
 
 const productosEPSchema = Joi.object({
     nombre: Joi.string(),
-    descripcion: Joi.string(),
     precio_en_promocion: Joi.number()
 });
 
