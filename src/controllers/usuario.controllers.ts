@@ -3,7 +3,6 @@ import { Usuario } from "../models/Usuario"
 const Joi = require('joi')
 
 const usuariosSchema = Joi.object({
-    nombre: Joi.string(),
     correo_electronico: Joi.string()
 })
 
@@ -22,7 +21,7 @@ export const createUser = async(req : Request,res : Response) => {
         return res.json(productos);
     }
     catch(error){
-        
+
         if(error instanceof Error) return res.status(500).json({message: error.message})
     }
 }

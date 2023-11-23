@@ -5,8 +5,6 @@ import { ResumeOptions } from "typeorm";
 const Joi = require('joi')
 
 const productosSchema = Joi.object({
-    nombre: Joi.string(),
-    descripcion: Joi.string(),
     precio: Joi.number(),
     categoria: Joi.string(),
     fabricante: Joi.string(),
