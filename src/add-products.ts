@@ -1,4 +1,3 @@
-import { DriverPackageNotInstalledError, getRepository } from 'typeorm';
 import { Productos } from './models/Productos'; // adjust the import path according to your project structure
 import { ProductosEnPromocion } from './models/ProductosEnPromocion';
 
@@ -231,7 +230,7 @@ export async function seedProducts() {
                   producto.fabricante = data.fabricante;
                   producto.cantidad_en_existencia = data.cantidad_en_existencia;
                   producto.unidad_de_medida = data.unidad_de_medida;
-                  producto.activo = data.activo !== undefined ? data.activo : 1; 
+                  producto.activo = data.activo ?? 1; 
                   producto.usuario_de_creacion = "SYSTEM"
       
                   await Productos.save(producto);
