@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { ResumeOptions } from "typeorm";
 import { Productos } from "../models/Productos"
-import { validateEntity } from "./validation.controller";
+import { hasUnallowedFields, validateEntity } from "./validation.controller";
 const Joi = require('joi')
 
 const productosSchema = Joi.object({
@@ -80,13 +80,40 @@ export const getProductoById = async (req: Request, res: Response) => {
 
 export const updateProducto = async (req: Request, res: Response) =>{
     const {id} = req.params
-    const producto = await Productos.findOneBy({id: parseInt(req.params.id)})
-    console.log(producto)
+    const {nombre} = req.params;
+
+    const allowedUpdateFields = ['nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida']; 
+
+    if (hasUnallowedFields(req.body, allowedUpdateFields)) {
+        return res.status(400).json({ message: 'Request contains unallowed fields' });
+    }
+    let producto = await Productos.findOneBy({id: parseInt(req.params.id)})
 
     if (!producto) return res.status(404).json({message:'Producto does not exist'})
+    producto.usuario_de_actualizacion = nombre
 
     await Productos.update({id: parseInt(id)}, req.body)
-    return res.sendStatus(204)
+
+    producto =await Productos.findOneBy({id: parseInt(req.params.id)})
+
+    if(!producto){
+        return res.status(404).json({message:"Error finding product. Please try again or contact tech support."})
+    }
+   
+    return res.json({
+        status:"Success",
+        message:"Succesfully updated product",
+        data: {
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio, 
+            descripcion: producto.descripcion,
+            categoria: producto.categoria, 
+            fabricante: producto.fabricante,
+            cantidad_en_existencia: producto.cantidad_en_existencia, 
+            unidad_de_medida: producto.unidad_de_medida 
+        }
+    })
 }
 
 

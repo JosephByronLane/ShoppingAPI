@@ -72,5 +72,5 @@ export class Productos extends BaseEntity{
     extra2: string;
 
     @OneToOne(() => DetalladoCompras, detalladoCompras => detalladoCompras.producto)
-    detalleCompra: DetalladoCompras; // Only if you have a bidirectional relationship
+    detalleCompra: DetalladoCompras;
 }
