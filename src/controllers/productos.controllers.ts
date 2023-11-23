@@ -12,7 +12,6 @@ const productosSchema = Joi.object({
     unidad_de_medida: Joi.string(),
 });
 
-
 export const getProductos = async (req: Request, res: Response) => {
     try{
         const { error, value } = productosSchema.validate(req.query);
@@ -46,7 +45,10 @@ export const getProductos = async (req: Request, res: Response) => {
 export const getProductoById = async (req: Request, res: Response) => {
     try{
         var id =  req.params.id
-
+        
+        if (isNaN(parseInt(id))) {
+            return res.status(400).json({ message: "Invalid  ID." });
+        }
         let producto  =await Productos.findOne({
             where:{
                 id: parseInt(id),
@@ -78,6 +80,9 @@ export const getProductoById = async (req: Request, res: Response) => {
 export const updateProducto = async (req: Request, res: Response) =>{
     const {id} = req.params
     const {nombre} = req.params;
+    if (isNaN(parseInt(id))) {
+        return res.status(400).json({ message: "Invalid Compra ID." });
+    }
 
     const allowedUpdateFields = ['nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida']; 
 
@@ -118,8 +123,8 @@ export const deleteProducto = async (req: Request, res: Response) => {
     try{
         const{id} = req.params
 
-        if(!id){
-            return res.status(404).json({message: `Error recieving User ID.`})
+        if (isNaN(parseInt(id))) {
+            return res.status(400).json({ message: "Invalid Compra ID." });
         }
 
         console.log('-----------------------------------')

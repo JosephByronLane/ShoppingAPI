@@ -3,6 +3,7 @@ import { DetalladoCompras } from '../models/DetalladoCompras';
 import { Productos } from '../models/Productos';
 import { Usuario } from '../models/Usuario';
 import { Compras } from '../models/Compras';
+import { number } from 'yargs';
 
 export const addToCart = async (req: Request, res: Response) => {
     
@@ -16,9 +17,12 @@ export const addToCart = async (req: Request, res: Response) => {
 
     console.log("Found related data.")
 
-    if (typeof cantidad !== 'number') {
-        return res.status(404).json({ message: `Cantidad must be a number.` });
+    if (productoId === undefined || cantidad === undefined) {
+        return res.status(400).json({ message: 'Missing productoId and/or cantidad' });
+    }
 
+    if (typeof cantidad !== 'number') {
+        return res.status(400).json({ message: `Cantidad must be a number.` });
     }
 
     if (!producto) {
@@ -30,7 +34,7 @@ export const addToCart = async (req: Request, res: Response) => {
     }
 
     if (producto.cantidad_en_existencia <  cantidad){
-        return res.status(404).json({ message: `Not enough available in stock. Only ${producto.cantidad_en_existencia} available.` });
+        return res.status(409).json({ message: `Not enough available in stock. Only ${producto.cantidad_en_existencia} available.` });
     }
 
     console.log("------------------------------------------------")
@@ -178,6 +182,7 @@ export const getCartItems = async (req: Request, res: Response) => {
 export const getCartItem = async (req: Request, res: Response) => {
     const purchaseId = parseInt(req.params.id); 
 
+
     if (isNaN(purchaseId)) {
         return res.status(400).json({ message: 'Invalid purchase ID' });
     }
@@ -229,7 +234,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
     }
 
     if (detalladoCompra.compra.status !== 'Activo' || detalladoCompra.compra.usuario.id !== req.id) {
-        return res.status(403).json({ message: 'You do not have permission to remove this item.' });
+        return res.status(403).json({ message: 'You do not have permission to remove this item. Purchase is not active' });
     }
     detalladoCompra.compra.total_de_productos -= detalladoCompra.cantidad
     detalladoCompra.producto.cantidad_en_existencia+=detalladoCompra.cantidad
@@ -250,6 +255,10 @@ export const updateCartItem = async (req: Request, res: Response) => {
     const {nombre} = req.params
 
     const {nuevaCantidad } = req.body;
+    
+    if (isNaN(nuevaCantidad)) {
+        return res.status(400).json({ message: 'Invalid purchase ID' });
+    }
 
     let cartItem = await DetalladoCompras.findOne({
         where: {
@@ -258,6 +267,9 @@ export const updateCartItem = async (req: Request, res: Response) => {
         relations: ['producto', 'compra'], 
     });
 
+    if (!nuevaCantidad) {
+        return res.status(400).json({ message: 'Quantity not found.' });
+    }
 
     if (!cartItem) {
         return res.status(404).json({ message: 'detalleProducto found, make sure its an active purchase.' });

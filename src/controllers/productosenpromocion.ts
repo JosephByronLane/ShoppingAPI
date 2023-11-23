@@ -50,6 +50,9 @@ export const getProductoEPs = async (req: Request, res: Response) => {
 
 export const getProductoEPById = async (req: Request, res: Response) => {
     try{
+        if (isNaN(parseInt(req.params.id))) {
+            return res.status(400).json({ message: "Invalid Compra ID." });
+        }
         const productoEP = await ProductosEnPromocion.findOne({
             where:{
                 id: parseInt(req.params.id),
@@ -81,6 +84,9 @@ export const getProductoEPById = async (req: Request, res: Response) => {
 
 export const updateProductoEP = async (req: Request, res: Response) =>{
     const {id} = req.params
+    if (isNaN(parseInt(id))) {
+        return res.status(400).json({ message: "Invalid Compra ID." });
+    }
     const allowedUpdateFields = ['id','nombre','descripcion','precio_en_promocion','fecha_de_inicio','fecha_de_finalizacion']; 
 
     if (hasUnallowedFields(req.body, allowedUpdateFields)) {
@@ -117,8 +123,8 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
     try{
         const{id} = req.params
 
-        if(!id){
-            return res.status(404).json({message: `Error recieving product ID.`})
+        if (isNaN(parseInt(id))) {
+            return res.status(400).json({ message: "Invalid Compra ID." });
         }
 
         console.log('-----------------------------------')

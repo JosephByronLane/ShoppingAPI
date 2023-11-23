@@ -92,6 +92,10 @@ export const updateUser = async (req: Request, res: Response) =>{
     const {id} = req.params
     const updateData = req.body;
 
+    if (isNaN(parseInt(id))) {
+        return res.status(400).json({ message: "Invalid Compra ID." });
+    }
+
     const allowedUpdateFields = ['nombre', 'correo_electronico', 'contrasenia'];
 
     if (hasUnallowedFields(updateData, allowedUpdateFields)) {
@@ -123,7 +127,9 @@ export const updateUser = async (req: Request, res: Response) =>{
 export const deleteUser = async (req: Request, res: Response)=>{
     try{
         const{id} = req.params
-
+        if (isNaN(parseInt(id))) {
+            return res.status(400).json({ message: "Invalid Compra ID." });
+        }
         if(!id){
             return res.status(404).json({message: `Error recieving User ID.`})
         }
@@ -167,6 +173,10 @@ export const deleteUser = async (req: Request, res: Response)=>{
 export const getUser = async(req:Request, res:Response)=>{
     try{
         const{id} = req.params
+        
+        if (isNaN(parseInt(id))) {
+            return res.status(400).json({ message: "Invalid Compra ID." });
+        }
 
         if(!id){
             return res.status(404).json({message: `Error recieving User ID.`})
@@ -212,7 +222,12 @@ export const getUser = async(req:Request, res:Response)=>{
 
 export const findUserByUsername = async (nombre: string): Promise<Usuario | null> => {
     try {
+        console.log(nombre)
+        console.log(typeof nombre)
         const user = await Usuario.findOneBy({ nombre });
+        if(!user){
+            console.log("USER IS NULL")
+        }
         return user || null;
     } catch (error) {
         console.error(error);

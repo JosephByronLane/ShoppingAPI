@@ -13,4 +13,6 @@ router.put('/equipo-2/purchases/:id', verifyToken, updateCartItem)
 
 router.post('/equipo-2/purchases/finalize', verifyToken, finalizarCompra)
 router.delete('/equipo-2/purchases/finalize/:id', verifyToken, cancelarPedido)
+
+
 export default router

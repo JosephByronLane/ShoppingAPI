@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const compras_controller_1 = require("../controllers/compras.controller");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const router = (0, express_1.Router)();
+router.post('/equipo-2/purchases', auth_middleware_1.verifyToken, compras_controller_1.addToCart);
+router.get('/equipo-2/purchases', auth_middleware_1.verifyToken, compras_controller_1.getCartItems);
+router.get('/equipo-2/purchases/:id', auth_middleware_1.verifyToken, compras_controller_1.getCartItem);
+router.delete('/equipo-2/purchases', auth_middleware_1.verifyToken, compras_controller_1.removeFromCart);
+router.put('/equipo-2/purchases/:id', auth_middleware_1.verifyToken, compras_controller_1.updateCartItem);
+router.post('/equipo-2/purchases/finalize', auth_middleware_1.verifyToken, compras_controller_1.finalizarCompra);
+router.delete('/equipo-2/purchases/finalize/:id', auth_middleware_1.verifyToken, compras_controller_1.cancelarPedido);
+exports.default = router;

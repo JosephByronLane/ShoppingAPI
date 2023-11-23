@@ -1,12 +1,8 @@
 import {Router} from 'express'
-// import {getProducts, getProductById, createProduct, updateProduct, deleteProduct} from '../controllers/productos.controllers';
 import * as productosController from '../controllers/productos.controllers';
 
 const router2 = Router();
 
-
-import {needlogin} from '../index'
-import { verify } from 'crypto';
 import { verifyToken } from '../middleware/auth.middleware';
 
 
