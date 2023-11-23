@@ -51,6 +51,7 @@ export const addToCart = async (req: Request, res: Response) => {
         compraActiva = new Compras();
         compraActiva.usuario = user;
         compraActiva.nombre_del_cliente = user.nombre;
+        compraActiva.usuario_de_creacion = usuarionombre as string
         await Compras.save(compraActiva);
         console.log(compraActiva)
         console.log("------------------------------------------------")
@@ -89,6 +90,7 @@ export const addToCart = async (req: Request, res: Response) => {
         console.log(`PRODUCT NOT FOUND: Making new product, adding ${cantidad} to a new detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
         detallePedido.compra=compraActiva;
+        detallePedido.usuario_de_creacion = usuarionombre as string;
         detallePedido.cantidad = 0;
         detallePedido.producto = producto;
         detallePedido.cantidad += cantidad;
@@ -132,9 +134,18 @@ export const addToCart = async (req: Request, res: Response) => {
         relations: ['detalladoCompras', 'detalladoCompras.producto']
     });
 
+
+    if (!compraActiva){
+        return res.status(404).json({ message: `Error retrieving purchase. Try again or call tech support, lmao.` });
+    }
     const formattedCompra = formatPurchaseLimited(compraActiva);
 
-    return res.json(formattedCompra);
+    return res.json(
+        {
+            status: "Success",
+            messagE:"Added Item to purchase succesfully.",
+            data: formattedCompra
+        });
 };
 
 
@@ -220,6 +231,8 @@ export const removeFromCart = async (req: Request, res: Response) => {
     if (detalladoCompra.compra.status !== 'Activo' || detalladoCompra.compra.usuario.id !== req.id) {
         return res.status(403).json({ message: 'You do not have permission to remove this item.' });
     }
+    detalladoCompra.compra.total_de_productos -= detalladoCompra.cantidad
+    detalladoCompra.producto.cantidad_en_existencia+=detalladoCompra.cantidad
     await DetalladoCompras.remove(detalladoCompra);
 
     return res.json({ 
@@ -233,22 +246,66 @@ export const removeFromCart = async (req: Request, res: Response) => {
 };
 
 export const updateCartItem = async (req: Request, res: Response) => {
-    const { carritoItemId, nuevaCantidad } = req.body;
+    const {id} = req.params
+    const {nombre} = req.params
 
-    const cartItem = await DetalladoCompras.findOneBy({ id: carritoItemId });
+    const {nuevaCantidad } = req.body;
+
+    let cartItem = await DetalladoCompras.findOne({
+        where: {
+             id: parseInt(id) 
+            },
+        relations: ['producto', 'compra'], 
+    });
+
 
     if (!cartItem) {
-        return res.status(404).json({ message: 'Cart item not found' });
+        return res.status(404).json({ message: 'detalleProducto found, make sure its an active purchase.' });
     }
 
     if (nuevaCantidad <= 0) {
         return res.status(400).json({ message: 'Quantity must be greater than zero' });
     }
+    if(cartItem.compra.activo != true){
+        return res.status(400).json({message:"You must be modifying an active purchase."})
+    }
+
+    const priceToRemove = (cartItem.producto.precio * cartItem.cantidad);
+    cartItem.compra.precio_total -= priceToRemove;
+    cartItem.compra.total_de_productos -= cartItem.cantidad
+    cartItem.producto.cantidad_en_existencia += cartItem.cantidad
+
+    const priceToAdd = (cartItem.producto.precio*parseInt(nuevaCantidad))
+    cartItem.producto.cantidad_en_existencia-=parseInt(nuevaCantidad)
+
+    cartItem.compra.precio_total += priceToAdd
+    cartItem.compra.total_de_productos += parseInt(nuevaCantidad)
+    cartItem.compra.usuario_de_actualizacion = nombre as string
 
     cartItem.cantidad = parseInt(nuevaCantidad);
-    await DetalladoCompras.save(cartItem);
 
-    return res.json(cartItem);
+    await Productos.save(cartItem.producto); 
+    await DetalladoCompras.save(cartItem);
+    await Compras.save(cartItem.compra);
+
+    const updatedCompra = await Compras.findOne({
+        where: { id: cartItem.compra.id },
+        relations: ['detalladoCompras', 'detalladoCompras.producto'], 
+    });
+    
+    if (!updatedCompra) {
+        return res.status(404).json({ message: 'Error finding updated Compra, please contact tech support.' });
+    }
+
+    const formattedCompra = formatPurchaseLimited(updatedCompra);
+
+    return res.json({
+        status:"Success",
+        message:"Succesfuly updated item in detalladoProducto",
+        data:{
+            formattedCompra
+        }
+    });
 };
 
 export const finalizarCompra = async (req: Request, res: Response) => {
@@ -319,8 +376,7 @@ export const cancelarPedido = async (req: Request, res: Response) => {
         message: `Compra with ID: ${compraId} has been canceled.`
     });
 };
-//@ts-ignore
-const formatPurchaseLimited = (compra) => {//even though theres an error it seems to work lmao
+const formatPurchaseLimited = (compra: Compras) => {//even though theres an error it seems to work lmao
     return {
         compraId: compra.id,
         descripcion: compra.descripcion,
@@ -328,20 +384,16 @@ const formatPurchaseLimited = (compra) => {//even though theres an error it seem
         precio_total: compra.precio_total,
         total_de_productos: compra.total_de_productos,
         status: compra.status,
-        //@ts-ignore
-        detalladoCompras: compra.detalladoCompras.map(dc => ({
-            productoId: dc.producto?.id ,
-            productoNombre: dc.producto?.nombre ,
+        detalladoCompras: compra.detalladoCompras ? compra.detalladoCompras.map(dc => ({
+            detalladoCompraId: dc.id,
+            productoId: dc.producto?.id,
+            productoNombre: dc.producto?.nombre,
             cantidad: dc.cantidad,
-            detalladoCompraId: dc.id
-
-
-        }))
+        })) : ["ERROR RETRIEVING DETALLADOCOMPRAS BUT DONT WORRY, THE DATA WAS UPDATED/SET/PUT/WHATEVER CORRECTLY."]
     };
 };
 
-//@ts-ignore
-const formatPurchaseFull = (compra) => {//even though theres an error it seems to work lmao
+const formatPurchaseFull = (compra: Compras) => {//even though theres an error it seems to work lmao
     return {
         id: compra.id,
         descripcion: compra.descripcion,
@@ -353,7 +405,6 @@ const formatPurchaseFull = (compra) => {//even though theres an error it seems t
             id: compra.usuario.id,
             nombre: compra.usuario.nombre,
         },
-        //@ts-ignore
         detalladoCompras: compra.detalladoCompras.map(dc => ({
             id: dc.id,
             cantidad: dc.cantidad,

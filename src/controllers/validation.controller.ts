@@ -18,3 +18,7 @@ export const validateEntity = async (entity: BaseEntity, data: any): Promise<any
     }
     return [];
 };
+
+export const hasUnallowedFields = (body: {}, allowedFields: string | string[]) => {
+    return Object.keys(body).some(key => !allowedFields.includes(key));
+  };

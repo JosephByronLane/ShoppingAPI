@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { Usuario } from "../models/Usuario"
 import { BaseEntity } from "typeorm"
 import bcrypt from 'bcrypt';
-import { validateEntity } from "./validation.controller";
+import { hasUnallowedFields, validateEntity } from "./validation.controller";
 const Joi = require('joi')
 
 const usuariosSchema = Joi.object({
@@ -12,7 +12,7 @@ const usuariosSchema = Joi.object({
 
 export const createUser = async(req : Request,res : Response) => {
     try{
-        const {name, correo_electronico, contrasenia} =req.body
+        const {nombre, correo_electronico, contrasenia} =req.body
 
         const usuario = new Usuario();
         const id = req.id;
@@ -33,7 +33,7 @@ export const createUser = async(req : Request,res : Response) => {
         
         const contraseniaHasheada = await bcrypt.hash(contrasenia, 10);
 
-        usuario.nombre = name;
+        usuario.nombre = nombre;
         usuario.correo_electronico = correo_electronico;
         usuario.contrasenia = contraseniaHasheada;
         usuario.usuario_de_creacion = req.nombre;
@@ -90,12 +90,33 @@ export const getUsers = async (req: Request, res: Response) =>{
 
 export const updateUser = async (req: Request, res: Response) =>{
     const {id} = req.params
+    const updateData = req.body;
+
+    const allowedUpdateFields = ['nombre', 'correo_electronico', 'contrasenia'];
+
+    if (hasUnallowedFields(updateData, allowedUpdateFields)) {
+        return res.status(400).json({ message: 'Request contains unallowed fields' });
+    }
+
+    if (updateData.hasOwnProperty('password')) {
+        const hashedPassword = await bcrypt.hash(updateData.password, 10);
+        updateData.password = hashedPassword;
+    }
+
     const user = await Usuario.findOneBy({id: parseInt(req.params.id)})
     
     if (!user) return res.status(404).json({message:'User does not exist'})
 
     await Usuario.update({id: parseInt(id)}, req.body)
-    return res.sendStatus(204)
+    return res.json({
+        status:"Success",
+        message:"Succesfully changed user data",
+        data: {
+            id: user.id,
+            nombre: user.nombre,
+            correo_electronico: user.correo_electronico
+        }
+    })
 
 }
 

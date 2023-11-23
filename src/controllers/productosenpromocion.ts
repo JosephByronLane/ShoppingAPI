@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ProductosEnPromocion } from "../models/ProductosEnPromocion";
-import { validateEntity } from "./validation.controller";
+import { hasUnallowedFields, validateEntity } from "./validation.controller";
 import { Productos } from "../models/Productos";
 
 const Joi = require('joi')
@@ -57,13 +57,36 @@ export const getProductoEPById = async (req: Request, res: Response) => {
 
 export const updateProductoEP = async (req: Request, res: Response) =>{
     const {id} = req.params
-    const producto = await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
+    const allowedUpdateFields = ['id','nombre','descripcion','precio_en_promocion','fecha_de_inicio','fecha_de_finalizacion']; 
+
+    if (hasUnallowedFields(req.body, allowedUpdateFields)) {
+        return res.status(400).json({ message: 'Request contains unallowed fields' });
+    }
+    let producto = await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
     console.log(producto)
 
-    if (!producto) return res.status(404).json({message:'Producto does not exist'})
-
+    if (!producto) return res.status(404).json({message:'Producto en promocion does not exist'})
+    
     await ProductosEnPromocion.update({id: parseInt(id)}, req.body)
-    return res.sendStatus(204)
+
+    producto =await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
+
+    if(!producto){
+        return res.status(404).json({message:"Error finding product. Please try again or contact tech support."})
+    }
+
+    return res.json({
+        status:"Success",
+        message:"Succesfully updated product en promocion",
+        data:{
+            id: producto.id,
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            precio_en_promocion: producto.precio_en_promocion,
+            fecha_de_inicio: producto.fecha_de_inicio,
+            fecha_de_finalizacion: producto.fecha_de_finalizacion
+        }
+    })
 }
 
 export const deleteProductoEP = async (req: Request, res: Response) => {
