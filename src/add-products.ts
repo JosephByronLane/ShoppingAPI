@@ -232,6 +232,7 @@ export async function seedProducts() {
                   producto.cantidad_en_existencia = data.cantidad_en_existencia;
                   producto.unidad_de_medida = data.unidad_de_medida;
                   producto.activo = data.activo !== undefined ? data.activo : 1; 
+                  producto.usuario_de_creacion = "SYSTEM"
       
                   await Productos.save(producto);
                   console.log('-----------------------------------')
@@ -277,3 +278,4 @@ export async function seedPromotionalProducts(){
   console.error('Error seeding products:', error);
   }
 };
+
