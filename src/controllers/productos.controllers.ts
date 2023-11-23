@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { ResumeOptions } from "typeorm";
 import { Productos } from "../models/Productos"
 import { hasUnallowedFields, validateEntity } from "./validation.controller";
 const Joi = require('joi')
@@ -32,7 +30,7 @@ export const getProductos = async (req: Request, res: Response) => {
             },
             select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida'],
         });
-        return res.json({
+        return res.status(200).json({
             status: "Success",
             message: "Retrieved all users.",
             data:{
@@ -64,7 +62,7 @@ export const getProductoById = async (req: Request, res: Response) => {
             return res.status(404).json({message: `producto with id: ${id} not found.`})
         }
 
-        return res.json({ 
+        return res.status(200).json({ 
             status:"Success",
             message:"Succesfully found producto.",
             data: producto
@@ -99,7 +97,7 @@ export const updateProducto = async (req: Request, res: Response) =>{
         return res.status(404).json({message:"Error finding product. Please try again or contact tech support."})
     }
    
-    return res.json({
+    return res.status(200).json({
         status:"Success",
         message:"Succesfully updated product",
         data: {
@@ -151,7 +149,7 @@ export const deleteProducto = async (req: Request, res: Response) => {
         console.log('-----------------------------------')   
 
         Productos.save(producto)
-        res.json({ 
+        res.status(200).json({ 
             status:"Success",
             message:"Succesfully deleted.",
         });
@@ -172,7 +170,7 @@ export const createProducto = async (req: Request, res: Response) => {
 
         await producto.save();
 
-        return res.json({ 
+        return res.status(200).json({ 
             status:"Success",
             message:"Succesfully created Product",
             data: {

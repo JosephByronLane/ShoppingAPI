@@ -41,7 +41,7 @@ export const createUser = async(req : Request,res : Response) => {
 
 
         await usuario.save()
-        res.json({ 
+        res.status(200).json({ 
             status:"Success",
             message:"Succesfully created User",
             data: {
@@ -75,7 +75,7 @@ export const getUsers = async (req: Request, res: Response) =>{
             },
             select: ['id', 'nombre', 'correo_electronico'],
         });
-        return res.json({
+        return res.status(200).json({
             status: "Success",
             message: "Retrieved all users.",
             data:{
@@ -108,7 +108,7 @@ export const updateUser = async (req: Request, res: Response) =>{
     if (!user) return res.status(404).json({message:'User does not exist'})
 
     await Usuario.update({id: parseInt(id)}, req.body)
-    return res.json({
+    return res.status(200).json({
         status:"Success",
         message:"Succesfully changed user data",
         data: {
@@ -154,7 +154,7 @@ export const deleteUser = async (req: Request, res: Response)=>{
         console.log(`Users with id ${id} active succesfully set to 0.`);
         console.log('-----------------------------------')   
         Usuario.save(user)
-        res.json({ 
+        res.status(200).json({ 
             status:"Success",
             message:"Succesfully deleted.",
         });
@@ -198,7 +198,7 @@ export const getUser = async(req:Request, res:Response)=>{
         console.log(`Users with id ${id} active was succesfully found..`);
         console.log('-----------------------------------')   
 
-        return res.json({ 
+        return res.status(200).json({ 
             status:"Success",
             message:"Succesfully found user.",
             data: user
@@ -209,21 +209,6 @@ export const getUser = async(req:Request, res:Response)=>{
         if(error instanceof Error) return res.status(500).json({message:error.message})
     }
 }
-
-export const getUserByUsername = async (req: Request, res: Response) => {
-    try {
-        const user = await findUserByUsername(req.params.usuario);
-        if (user) {
-            return res.json(user);
-        } else {    
-            return res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            return res.status(500).json({ message: error.message });
-        }
-    }
-};
 
 export const findUserByUsername = async (nombre: string): Promise<Usuario | null> => {
     try {

@@ -140,7 +140,7 @@ export const addToCart = async (req: Request, res: Response) => {
     }
     const formattedCompra = formatPurchaseLimited(compraActiva);
 
-    return res.json(
+    return res.status(200).json(
         {
             status: "Success",
             messagE:"Added Item to purchase succesfully.",
@@ -166,7 +166,7 @@ export const getCartItems = async (req: Request, res: Response) => {
 
     const formattedCompra = formatPurchaseFull(compra);
 
-    return res.json({
+    return res.status(200).json({
         status: "Success",
         message: "Found all purchases",
         data: {
@@ -195,7 +195,7 @@ export const getCartItem = async (req: Request, res: Response) => {
 
     const formattedCompra = formatPurchaseFull(compra);
 
-    return res.json({
+    return res.status(200).json({
         status: "Success",
         message: `Found purchase with id: ${purchaseId}`,
         data: {
@@ -235,7 +235,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
     detalladoCompra.producto.cantidad_en_existencia+=detalladoCompra.cantidad
     await DetalladoCompras.remove(detalladoCompra);
 
-    return res.json({ 
+    return res.status(200).json({ 
         status:"Success",
         message:"Succesfully removed item from cart",
         data: {
@@ -299,7 +299,7 @@ export const updateCartItem = async (req: Request, res: Response) => {
 
     const formattedCompra = formatPurchaseLimited(updatedCompra);
 
-    return res.json({
+    return res.status(200).json({
         status:"Success",
         message:"Succesfuly updated item in detalladoProducto",
         data:{
@@ -330,7 +330,7 @@ export const finalizarCompra = async (req: Request, res: Response) => {
     compraActiva.status="Finalizado"
     compraActiva.activo=false;
     Compras.save(compraActiva)
-    return res.json({ 
+    return res.status(200).json({ 
         status:"Success",
         message:"Succesfully finalized purchase",
         data: {
@@ -371,7 +371,7 @@ export const cancelarPedido = async (req: Request, res: Response) => {
     compraActiva.activo = false; 
     await compraActiva.save();
 
-    return res.json({
+    return res.status(200).json({
         status: "Success",
         message: `Compra with ID: ${compraId} has been canceled.`
     });

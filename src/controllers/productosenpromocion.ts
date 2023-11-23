@@ -35,7 +35,13 @@ export const getProductoEPs = async (req: Request, res: Response) => {
             ]
         });
 
-        return res.json(productos);
+        return res.status(200).json({
+            status:"Success",
+            message:"Successfully retrieved data.",
+            data:{
+                productos
+            }
+        });
     }
     catch(error){
         if(error instanceof Error) return res.status(500).json({message: error.message})
@@ -44,8 +50,27 @@ export const getProductoEPs = async (req: Request, res: Response) => {
 
 export const getProductoEPById = async (req: Request, res: Response) => {
     try{
-        const productoEP = await ProductosEnPromocion.findOneBy({id:parseInt(req.params.id)})
-        return res.json(productoEP)
+        const productoEP = await ProductosEnPromocion.findOne({
+            where:{
+                id: parseInt(req.params.id),
+                activo:1
+            },
+            select: [
+                'id',
+                'nombre',
+                'descripcion',
+                'precio_en_promocion',
+                'fecha_de_inicio',
+                'fecha_de_finalizacion'
+            ]
+        });
+        return res.status(200).json({
+            status:"Success",
+            message:"Successfully retrieved data.",
+            data:{
+                productoEP
+            }
+        });
     }
     catch(error){
     if(error instanceof Error){
@@ -74,7 +99,7 @@ export const updateProductoEP = async (req: Request, res: Response) =>{
         return res.status(404).json({message:"Error finding product. Please try again or contact tech support."})
     }
 
-    return res.json({
+    return res.status(200).json({
         status:"Success",
         message:"Succesfully updated product en promocion",
         data:{
@@ -119,7 +144,7 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
         console.log('-----------------------------------')
         console.log(`Product's active succesfully set to 0.`);
         console.log('-----------------------------------')   
-        res.json({ 
+        res.status(200).json({ 
             status:"Success",
             message:"Succesfully deleted.",
         });
@@ -163,7 +188,7 @@ export const createProductoEP = async (req: Request, res: Response) => {
         promoProduct.producto = producto;
         await ProductosEnPromocion.save(promoProduct);
         await promoProduct.save()
-        return res.json({ 
+        return res.status(200).json({ 
             status:"Success",
             message:"Succesfully created Promotional product",
             data: {
