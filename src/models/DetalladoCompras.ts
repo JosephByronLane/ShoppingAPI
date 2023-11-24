@@ -1,39 +1,34 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, JoinTable, JoinColumn } from 'typeorm';
 import { Compras } from './Compras';
 import { Productos } from './Productos';
+import { IsNotEmpty, IsNumber } from 'class-validator';
+
 
 @Entity('detallado_compras')
-export class DetalladoCompras {
+export class DetalladoCompras extends BaseEntity{
 
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int', nullable: true })
+    @IsNumber()
+    @Column({ type: 'int', default: 0 })
     cantidad: number;
-
-    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-    precio_total: number;
-
-    @Column({ type: 'datetime', nullable: true })
+    
+    @CreateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_creacion: Date;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     usuario_de_creacion: string;
 
-    @Column({ type: 'datetime', nullable: true })
+    @UpdateDateColumn({ type: 'datetime', nullable: true })
     fecha_de_actualizacion: Date;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    usuario_de_actualizacion: string;
-
-    @Column({ type: 'tinyint', nullable: true })
-    activo: number;
-
-    @ManyToOne(() => Compras, compra => compra.id)
+    @ManyToOne(() => Compras)
+    @JoinColumn()
     compra: Compras;
 
-    @ManyToOne(() => Productos, producto => producto.id)
+    @ManyToOne(() => Productos)
+    @JoinColumn()
     producto: Productos;
-
 }
 
