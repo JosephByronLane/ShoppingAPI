@@ -3,7 +3,6 @@ import { DetalladoCompras } from '../models/DetalladoCompras';
 import { Productos } from '../models/Productos';
 import { Usuario } from '../models/Usuario';
 import { Compras } from '../models/Compras';
-import { number } from 'yargs';
 
 export const addToCart = async (req: Request, res: Response) => {
     
@@ -41,6 +40,7 @@ export const addToCart = async (req: Request, res: Response) => {
     console.log("Attempting to find active purchase with details:")
     console.log(`User ID: ${usuarioid}`)
     console.log("------------------------------------------------")
+    
     let compraActiva = await Compras.findOne({
         where: {
             usuario:{id: usuarioid}, 
