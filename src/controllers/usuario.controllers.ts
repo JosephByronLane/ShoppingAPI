@@ -107,20 +107,31 @@ export const updateUser = async (req: Request, res: Response) =>{
         updateData.password = hashedPassword;
     }
 
-    const user = await Usuario.findOneBy({id: parseInt(req.params.id)})
-    
+    const user = await Usuario.find({
+        where: {
+            id:parseInt(id),
+            activo: 1
+        },
+        select: ['id', 'nombre', 'correo_electronico'],
+    });    
     if (!user) return res.status(404).json({message:'User does not exist'})
 
     await Usuario.update({id: parseInt(id)}, req.body)
+
+
+    const updatedUser = await Usuario.findOne({
+        where: {
+            id: parseInt(id),
+            activo: 1
+        },
+        select: ['id', 'nombre', 'correo_electronico'],
+    });
+
     return res.status(200).json({
-        status:"Success",
-        message:"Succesfully changed user data",
-        data: {
-            id: user.id,
-            nombre: user.nombre,
-            correo_electronico: user.correo_electronico
-        }
-    })
+        status: "Success",
+        message: "Successfully changed user data",
+        data: updatedUser 
+    });
 
 }
 
