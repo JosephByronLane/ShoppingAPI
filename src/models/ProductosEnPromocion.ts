@@ -8,8 +8,6 @@ export class ProductosEnPromocion extends BaseEntity{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @IsNotEmpty()
-    @IsString()
     @Column({ type: 'varchar', length: 255, nullable: true })
     nombre: string;
 

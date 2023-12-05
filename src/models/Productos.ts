@@ -71,6 +71,10 @@ export class Productos extends BaseEntity{
     @Column({ type: 'varchar', length: 255, nullable: true })
     extra2: string;
 
+    
+    @Column({ type: 'tinyint', nullable: true, default:0})
+    enPromocion: number;
+    
     @OneToOne(() => DetalladoCompras, detalladoCompras => detalladoCompras.producto)
     detalleCompra: DetalladoCompras;
 }

@@ -32,7 +32,9 @@ export const getProductoEPs = async (req: Request, res: Response) => {
                 'precio_en_promocion',
                 'fecha_de_inicio',
                 'fecha_de_finalizacion'
-            ]
+            ],
+            relations: ['producto'] // Assuming 'producto' is the correct name of the relation
+
         });
 
         return res.status(200).json({
@@ -54,9 +56,9 @@ export const getProductoEPById = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Invalid Compra ID." });
         }
         const productoEP = await ProductosEnPromocion.findOne({
-            where:{
+            where: {
                 id: parseInt(req.params.id),
-                activo:1
+                activo: 1
             },
             select: [
                 'id',
@@ -65,7 +67,9 @@ export const getProductoEPById = async (req: Request, res: Response) => {
                 'precio_en_promocion',
                 'fecha_de_inicio',
                 'fecha_de_finalizacion'
-            ]
+                // Do not add 'producto' here; it's a relation, not a column
+            ],
+            relations: ['producto'] // Assuming 'producto' is the correct name of the relation
         });
         return res.status(200).json({
             status:"Success",
@@ -95,15 +99,16 @@ export const updateProductoEP = async (req: Request, res: Response) =>{
     let producto = await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
     console.log(producto)
 
-    if (!producto) return res.status(404).json({message:'Producto en promocion does not exist'})
+    if (!producto) return res.status(404).json({message:'Producto en promocion does not exist'})//test
     
-    await ProductosEnPromocion.update({id: parseInt(id)}, req.body)
 
     producto =await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
 
     if(!producto){
         return res.status(404).json({message:"Error finding product. Please try again or contact tech support."})
     }
+    producto.producto.precio = req.body.precio_en_promocion
+    await ProductosEnPromocion.update({id: parseInt(id)}, req.body)
 
     return res.status(200).json({
         status:"Success",
@@ -191,7 +196,15 @@ export const createProductoEP = async (req: Request, res: Response) => {
             console.log('-----------------------------------')  
             return res.status(404).json({ message: `Product with id: ${idproducto} not found.` });
         }
+        producto.precio = req.body.precio_en_promocion
+        producto.enPromocion = 1;
+        console.log('-----------------------------------')
+        console.log(`Product ${producto} now has price`);
+        console.log('-----------------------------------')  
+        promoProduct.nombre = producto.nombre
+
         promoProduct.producto = producto;
+        await Productos.save(producto)
         await ProductosEnPromocion.save(promoProduct);
         await promoProduct.save()
         return res.status(200).json({ 

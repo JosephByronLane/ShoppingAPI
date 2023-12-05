@@ -30,6 +30,9 @@ async function main(){
 
         app.listen(3000)
         console.log('-----------------------------------')
+        console.log('WebAPI')
+        console.log('-----------------------------------')
+        console.log('-----------------------------------')
         console.log('Server is listening on port 3000')
         console.log('-----------------------------------')
 
