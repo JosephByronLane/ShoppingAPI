@@ -6,6 +6,7 @@ import {seedProducts, seedPromotionalProducts} from "./add-products"
 export const needlogin = true;
 
 import dotenv from 'dotenv';
+import { seedUsers } from "./users-seed"
 dotenv.config();
 
 async function main(){
@@ -27,6 +28,11 @@ async function main(){
         console.log('Seeding products on promotion')
         console.log('-----------------------------------')
         await seedPromotionalProducts();
+
+        console.log('-----------------------------------')
+        console.log('Seeding pusers')
+        console.log('-----------------------------------')
+        await seedUsers();
 
         app.listen(3000)
         console.log('-----------------------------------')

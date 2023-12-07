@@ -56,6 +56,7 @@ export const addToCart = async (req: Request, res: Response) => {
         compraActiva.usuario = user;
         compraActiva.nombre_del_cliente = user.nombre;
         compraActiva.usuario_de_creacion = usuarionombre as string
+        compraActiva.descripcion=`Compra del usuario ${user.nombre}`
         await Compras.save(compraActiva);
         console.log(compraActiva)
         console.log("------------------------------------------------")
@@ -83,8 +84,7 @@ export const addToCart = async (req: Request, res: Response) => {
         console.log("------------------------------------------------")
         console.log(`PRODUCT FOUND: Found product in cart, adding ${cantidad} to detallePedido with id: ${detallePedido.id}`)
         console.log("------------------------------------------------")
-        detallePedido.cantidad += cantidad;
-        console.log(`${detallePedido.cantidad}`)
+        detallePedido.cantidad += cantidad;        console.log(`${detallePedido.cantidad}`)
         console.log("------------------------------------------------")
 
     } else {
