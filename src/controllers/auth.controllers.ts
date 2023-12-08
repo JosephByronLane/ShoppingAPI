@@ -9,11 +9,6 @@ export const tryLogin = async(req: Request, res: Response) =>{
     try {
         const { nombre, contrasenia } = req.body;
         
-        console.log('-----------------------------------')
-        console.log(`User recieved: ${nombre}`);
-        console.log(`Password recieved: ${contrasenia}`);
-        console.log('-----------------------------------')  
-
         const user = await findUserByUsername (nombre);
         if (!user) {
           return res.status(401).json({ message: 'Wrong Username' });

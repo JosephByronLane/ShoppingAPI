@@ -17,17 +17,17 @@ async function main(){
         console.log('-----------------------------------')
         console.log('Creating admin user')
         console.log('-----------------------------------')
-        await createAdminUser()
+        //await createAdminUser()
         
         console.log('-----------------------------------')
         console.log('Seeding products')
         console.log('-----------------------------------')
-        await seedProducts();
+        //await seedProducts();
 
         console.log('-----------------------------------')
         console.log('Seeding products on promotion')
         console.log('-----------------------------------')
-        await seedPromotionalProducts();
+        //await seedPromotionalProducts();
 
         console.log('-----------------------------------')
         console.log('Seeding pusers')

@@ -6,6 +6,7 @@ import loginRoutes from './routes/Login.routes'
 import productosRoutes from './routes/Productos.routes'
 import productosEPRoutes from './routes/ProductosEnPromocion.routes'
 import carritoRoutes from './routes/compras.routes'
+import { rateLimitMiddleware } from './middleware/rate-limiter.middleware'
 
 const app =express()
 app.disable('x-powered-by');
@@ -13,6 +14,13 @@ app.disable('x-powered-by');
 app.use(morgan('dev'))
 app.use(cors())
 app.use(express.json())
+//app.use(longTermLimiter)
+//app.use(shortTermLimiter);
+
+
+
+app.use(rateLimitMiddleware);
+
 
 app.use(userRoutes)
 app.use(loginRoutes)
