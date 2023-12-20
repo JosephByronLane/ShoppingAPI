@@ -8,7 +8,7 @@ import {ProductosEnPromocion} from './models/ProductosEnPromocion'
 
 export const AppDataSource= new DataSource({
     type: 'mysql',
-    host:  '34.234.63.150',
+    host:  '18.118.102.109',
     username: 'root',
     password:'Adminadmin1!',
     database: 'api_equipo2',
