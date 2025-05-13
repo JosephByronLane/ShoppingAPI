@@ -2,12 +2,12 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 import { Request,Response, NextFunction } from "express";
 import { RateLimiterRes } from "rate-limiter-flexible";
 const shortTermLimiterFlex = new RateLimiterMemory({
-    points: 3, // Number of requests
-    duration: 5, // Per seconds seconds
+    points: 3, 
+    duration: 5, 
 });
 const longTermLimiterFlex = new RateLimiterMemory({
-    points: 1500, // Number of requests
-    duration: 60*60, // Per seconds seconds
+    points: 1500, 
+    duration: 60*60, 
 });
 
 export async function rateLimitMiddleware(req: Request, res: Response, next: NextFunction) {
