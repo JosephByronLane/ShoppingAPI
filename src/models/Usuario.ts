@@ -3,7 +3,7 @@ import {Column, PrimaryGeneratedColumn, Entity, OneToMany, UpdateDateColumn,Crea
 import { Compras } from './Compras';
 import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
-@Entity('Usuario')
+@Entity('usuario')
 export class Usuario extends BaseEntity{
 
     @PrimaryGeneratedColumn()

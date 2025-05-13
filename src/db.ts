@@ -15,5 +15,7 @@ export const AppDataSource= new DataSource({
     port:3306,
     entities: [Usuario, Compras, DetalladoCompras, Productos, ProductosEnPromocion],
     logging: true,
-    synchronize: false  
+    synchronize: false,
+
 })
+    

@@ -1,10 +1,10 @@
 module.exports = {
     apps : [{
-      name: 'API',
-      script: 'build/index.js',
-      watch: true,
+      name: 'WebAPI',
+      script: 'build/index.js',//testing
+      watch: false,
       watch_delay: 1000,
-      ignore_watch : ["node_modules", "src"],
+      ignore_watch : ["node_modules",".git","", ".github", ],
       watch_options: {
         "followSymlinks": false
       }

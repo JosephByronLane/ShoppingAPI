@@ -27,7 +27,7 @@ export const getProductos = async (req: Request, res: Response) => {
                 ...filtro,
                 activo: 1
             },
-            select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida'],
+            select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida', 'enPromocion'],
         });
         return res.status(200).json({
             status: "Success",
@@ -54,7 +54,7 @@ export const getProductoById = async (req: Request, res: Response) => {
                 id: parseInt(id),
                 activo:1
             },
-            select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida'],
+            select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida', 'enPromocion'],
         })
 
         if (!producto){
@@ -181,7 +181,8 @@ export const createProducto = async (req: Request, res: Response) => {
             data: {
                 id: producto.id,
                 nombre: producto.nombre
-            }
+            },
+            select: ['id', 'nombre', 'precio', 'descripcion', 'categoria', 'fabricante', 'cantidad_en_existencia','unidad_de_medida', 'enPromocion']
            });
         } catch (error) {
             if (error instanceof Error) {

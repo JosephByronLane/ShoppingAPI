@@ -6,6 +6,7 @@ import {seedProducts, seedPromotionalProducts} from "./add-products"
 export const needlogin = true;
 
 import dotenv from 'dotenv';
+import { seedUsers } from "./users-seed"
 dotenv.config();
 
 async function main(){
@@ -16,19 +17,27 @@ async function main(){
         console.log('-----------------------------------')
         console.log('Creating admin user')
         console.log('-----------------------------------')
-        await createAdminUser()
+        //await createAdminUser()
         
         console.log('-----------------------------------')
         console.log('Seeding products')
         console.log('-----------------------------------')
-        await seedProducts();
+        //await seedProducts();
 
         console.log('-----------------------------------')
         console.log('Seeding products on promotion')
         console.log('-----------------------------------')
-        await seedPromotionalProducts();
+        //await seedPromotionalProducts();
+
+        console.log('-----------------------------------')
+        console.log('Seeding pusers')
+        console.log('-----------------------------------')
+        await seedUsers();
 
         app.listen(3000)
+        console.log('-----------------------------------')
+        console.log('WebAPI')
+        console.log('-----------------------------------')
         console.log('-----------------------------------')
         console.log('Server is listening on port 3000')
         console.log('-----------------------------------')

@@ -1,6 +1,4 @@
-import { getDefaultAutoSelectFamilyAttemptTimeout } from 'net';
 import request from 'supertest'
-import { number } from 'yargs';
 const serverUrl = 'http://localhost:3000'
 
 describe('POST /equipo-2/purchases',()=>{

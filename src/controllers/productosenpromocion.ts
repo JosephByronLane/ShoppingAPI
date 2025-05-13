@@ -32,7 +32,9 @@ export const getProductoEPs = async (req: Request, res: Response) => {
                 'precio_en_promocion',
                 'fecha_de_inicio',
                 'fecha_de_finalizacion'
-            ]
+            ],
+            relations: ['producto'] // Assuming 'producto' is the correct name of the relation
+
         });
 
         return res.status(200).json({
@@ -54,9 +56,9 @@ export const getProductoEPById = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Invalid Compra ID." });
         }
         const productoEP = await ProductosEnPromocion.findOne({
-            where:{
+            where: {
                 id: parseInt(req.params.id),
-                activo:1
+                activo: 1
             },
             select: [
                 'id',
@@ -65,7 +67,9 @@ export const getProductoEPById = async (req: Request, res: Response) => {
                 'precio_en_promocion',
                 'fecha_de_inicio',
                 'fecha_de_finalizacion'
-            ]
+                // Do not add 'producto' here; it's a relation, not a column
+            ],
+            relations: ['producto'] // Assuming 'producto' is the correct name of the relation
         });
         return res.status(200).json({
             status:"Success",
@@ -87,24 +91,56 @@ export const updateProductoEP = async (req: Request, res: Response) =>{
     if (isNaN(parseInt(id))) {
         return res.status(400).json({ message: "Invalid Compra ID." });
     }
-    const allowedUpdateFields = ['id','nombre','descripcion','precio_en_promocion','fecha_de_inicio','fecha_de_finalizacion']; 
+    const allowedUpdateFields = ['nombre','descripcion','precio_en_promocion','fecha_de_inicio','fecha_de_finalizacion']; 
+
+
+    console.log('-----------------------------------')
+    console.log(`parsed id`);
+    console.log('-----------------------------------')
 
     if (hasUnallowedFields(req.body, allowedUpdateFields)) {
         return res.status(400).json({ message: 'Request contains unallowed fields' });
     }
-    let producto = await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
+    let producto = await ProductosEnPromocion.findOne({
+        where: { id: parseInt(id) },
+        relations: ["producto"]
+    });
     console.log(producto)
 
     if (!producto) return res.status(404).json({message:'Producto en promocion does not exist'})
     
+    console.log('-----------------------------------')
+    console.log(`product good`);
+    console.log('-----------------------------------')
+
+
+    console.log('-----------------------------------')
+    console.log(`${console.log(producto.producto)}`);
+    console.log('-----------------------------------')
+
+    if (req.body.precio_en_promocion !== undefined) {
+        producto.precio_en_promocion = req.body.precio_en_promocion;
+    }
+
+    // Assuming that the related `producto` needs to be updated separately
+    if (producto.producto) {
+        producto.producto.precio = req.body.precio; // Use the correct field name
+        await Productos.save(producto.producto); // Save changes to `producto`
+    }
+
+
+    console.log('-----------------------------------')
+    console.log(`tryna save`);
+    console.log('-----------------------------------')
     await ProductosEnPromocion.update({id: parseInt(id)}, req.body)
+
 
     producto =await ProductosEnPromocion.findOneBy({id: parseInt(req.params.id)})
 
     if(!producto){
         return res.status(404).json({message:"Error finding product. Please try again or contact tech support."})
     }
-
+    
     return res.status(200).json({
         status:"Success",
         message:"Succesfully updated product en promocion",
@@ -132,7 +168,8 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
         console.log('-----------------------------------')   
         let promoProduct  =await ProductosEnPromocion.findOne({
             where:{
-                id: parseInt(id)
+                id: parseInt(id),
+                activo : 1
             }
         })
 
@@ -150,9 +187,11 @@ export const deleteProductoEP = async (req: Request, res: Response) => {
         console.log('-----------------------------------')
         console.log(`Product's active succesfully set to 0.`);
         console.log('-----------------------------------')   
+        ProductosEnPromocion.save(promoProduct)
         res.status(200).json({ 
             status:"Success",
             message:"Succesfully deleted.",
+            promoProduct: promoProduct
         });
     }
     catch(error){
@@ -191,7 +230,15 @@ export const createProductoEP = async (req: Request, res: Response) => {
             console.log('-----------------------------------')  
             return res.status(404).json({ message: `Product with id: ${idproducto} not found.` });
         }
+        producto.precio = req.body.precio_en_promocion
+        producto.enPromocion = 1;
+        console.log('-----------------------------------')
+        console.log(`Product ${producto} now has price`);
+        console.log('-----------------------------------')  
+        promoProduct.nombre = producto.nombre
+
         promoProduct.producto = producto;
+        await Productos.save(producto)
         await ProductosEnPromocion.save(promoProduct);
         await promoProduct.save()
         return res.status(200).json({ 
